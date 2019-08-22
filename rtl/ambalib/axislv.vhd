@@ -202,6 +202,7 @@ begin
                 v.wstate := wtrans;
             else
                 -- AXI lite (no burst support)
+                v.b_valid := '1';
                 v_we := (others => '1');
                 if i_xslvi.aw_bits.addr(2) = '0' then
                     v_wadr := v_wadr_inc;

@@ -88,7 +88,8 @@ architecture arch_river_amba of river_amba is
 begin
 
   o_mstcfg <= xconfig;
-  w_resp_mem_data_valid <= i_msti.r_valid or (r.w_valid and i_msti.w_ready);
+  w_resp_mem_data_valid <= i_msti.r_valid or (r.w_valid and i_msti.w_ready)
+                           or (i_msti.aw_ready and i_msti.w_ready);
   -- Slave response resp = SLVERR (2'b10)
   -- Interconnect response resp = DECERR (2'b11):
   w_resp_mem_load_fault <= r.reading and i_msti.r_valid and i_msti.r_resp(1);
@@ -131,6 +132,8 @@ begin
                  wb_req_mem_burst, i_msti, r)
     variable v : RegistersType;
     variable vmsto   : nasti_master_out_type;
+    variable v_w_valid : std_logic;
+    variable v_w_last : std_logic;
   begin
 
     v := r;
@@ -152,11 +155,6 @@ begin
     vmsto.aw_bits.size  := "011"; -- 8 bytes
     vmsto.aw_bits.burst := wb_req_mem_burst;
 
-    vmsto.w_valid := r.w_valid;
-    vmsto.w_last := r.w_last;
-    vmsto.w_strb := wb_req_mem_strob;
-    vmsto.w_data := wb_req_mem_data;
-
     vmsto.b_ready := r.b_ready;
     vmsto.r_ready := '1';
 
@@ -166,14 +164,29 @@ begin
         v.reading := '0';
     end if;
 
+    v_w_valid := r.w_valid;
+    v_w_last := r.w_last;
     if (w_req_mem_valid and w_req_mem_write and i_msti.aw_ready) = '1' then
         v.w_addr := wb_req_mem_addr;
-        v.w_valid := '1';
-        v.w_last := '1';
+        -- not a burst operation only
+        v_w_valid := '1';
+        v_w_last := '1';
+        if i_msti.w_ready = '1' then
+            v.b_addr := wb_req_mem_addr;
+            v.b_ready := '1';
+        else
+            v.w_valid := '1';
+            v.w_last := '1';
+        end if;
     elsif i_msti.w_ready = '1' then
         v.w_valid := '0';
         v.w_last := '0';
     end if;
+
+    vmsto.w_valid := v_w_valid;
+    vmsto.w_last := v_w_last;
+    vmsto.w_strb := wb_req_mem_strob;
+    vmsto.w_data := wb_req_mem_data;
     
     if (r.w_valid and i_msti.w_ready) = '1' then
         v.b_addr := r.w_addr;

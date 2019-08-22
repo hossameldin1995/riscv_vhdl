@@ -132,7 +132,9 @@ begin
             if i_memop_load = '1' or i_memop_store = '1' then
                 w_mem_valid := '1';
                 if i_mem_req_ready = '1' then
-                    v.state := State_WaitResponse;
+                    if i_memop_load = '1' then
+                         v.state := State_WaitResponse;
+                    end if;
                 else
                     w_hold := '1';
                     v.state := State_WaitReqAccept;
@@ -149,7 +151,11 @@ begin
         wb_mem_data := r.res_data;
         w_hold := '1';
         if i_mem_req_ready = '1' then
-            v.state := State_WaitResponse;
+            if r.memop_r = '1' then
+                v.state := State_WaitResponse;
+            else
+                v.state := State_Idle;
+            end if;
         end if;
     when State_WaitResponse =>
         w_valid := '1';
@@ -160,7 +166,11 @@ begin
             if i_memop_load = '1' or i_memop_store = '1' then
                 w_mem_valid := '1';
                 if i_mem_req_ready = '1' then
-                    v.state := State_WaitResponse;
+                    if i_memop_load = '1' then
+                        v.state := State_WaitResponse;
+                    else
+                        v.state := State_Idle;
+                    end if;
                 else
                     w_hold := '1';
                     v.state := State_WaitReqAccept;
@@ -177,7 +187,11 @@ begin
             if i_memop_load = '1' or i_memop_store = '1' then
                 w_mem_valid := '1';
                 if i_mem_req_ready = '1' then
-                    v.state := State_WaitResponse;
+                    if i_memop_load = '1' then
+                        v.state := State_WaitResponse;
+                    else
+                        v.state := State_Idle;
+                    end if;
                 else
                     w_hold := '1';
                     v.state := State_WaitReqAccept;

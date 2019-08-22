@@ -79,8 +79,10 @@ begin
     variable v : reg_type;
     variable ar_midx : integer range 0 to CFG_NASTI_MASTER_TOTAL;
     variable aw_midx : integer range 0 to CFG_NASTI_MASTER_TOTAL;
+    variable w_midx_mux : integer range 0 to CFG_NASTI_MASTER_TOTAL;
     variable ar_sidx : integer range 0 to CFG_NASTI_SLAVES_TOTAL; -- +1 miss access
     variable aw_sidx : integer range 0 to CFG_NASTI_SLAVES_TOTAL; -- +1 miss access
+    variable w_sidx_mux : integer range 0 to CFG_NASTI_SLAVES_TOTAL;
     variable vmsto : nasti_master_out_vector_miss;
     variable vmsti : nasti_master_in_vector_miss;
     variable vslvi : nasti_slave_in_vector_miss;
@@ -88,7 +90,9 @@ begin
     variable aw_fire : std_logic;
     variable ar_fire : std_logic;
     variable w_fire : std_logic;
+    variable w_fire_lite : std_logic;
     variable w_busy : std_logic;
+    variable w_busy_lite : std_logic;
     variable r_fire : std_logic;
     variable r_busy : std_logic;
     variable b_fire : std_logic;
@@ -149,6 +153,7 @@ begin
     r_fire := vmsto(r.r_midx).r_ready and vslvo(r.r_sidx).r_valid and vslvo(r.r_sidx).r_last;
     -- Write channel:
     aw_fire := vmsto(aw_midx).aw_valid and vslvo(aw_sidx).aw_ready;
+    w_fire_lite := vmsto(aw_midx).w_valid and vmsto(aw_midx).w_last and vslvo(aw_sidx).w_ready;
     w_fire := vmsto(r.w_midx).w_valid and vmsto(r.w_midx).w_last and vslvo(r.w_sidx).w_ready;
     -- Write confirm channel
     b_fire := vmsto(r.b_midx).b_ready and vslvo(r.b_sidx).b_valid;
@@ -164,6 +169,12 @@ begin
         w_busy := '1';
     end if;
 
+    w_busy_lite := '0';
+    if (r.w_sidx /= CFG_NASTI_SLAVES_TOTAL)
+        or (r.b_sidx /= CFG_NASTI_SLAVES_TOTAL and b_fire = '0') then
+        w_busy_lite := '1';
+    end if;
+
     b_busy := '0';
     if (r.b_sidx /= CFG_NASTI_SLAVES_TOTAL and b_fire = '0')  then
         b_busy := '1';
@@ -177,7 +188,10 @@ begin
         v.r_midx := CFG_NASTI_MASTER_TOTAL;
     end if;
 
-    if aw_fire = '1' and w_busy = '0' then
+    if aw_fire = '1' and w_fire_lite = '1' and w_busy_lite = '0' then
+        v.w_sidx := CFG_NASTI_SLAVES_TOTAL;
+        v.w_midx := CFG_NASTI_MASTER_TOTAL;
+    elsif aw_fire = '1' and w_busy = '0' then
         v.w_sidx := aw_sidx;
         v.w_midx := aw_midx;
     elsif w_fire = '1' and b_busy = '0' then
@@ -185,7 +199,14 @@ begin
         v.w_midx := CFG_NASTI_MASTER_TOTAL;
     end if;
 
-    if w_fire = '1' and b_busy = '0' then
+    w_sidx_mux := r.w_sidx;
+    w_midx_mux := r.w_midx;
+    if aw_fire = '1' and w_fire_lite = '1' and w_busy_lite = '0' then
+        v.b_sidx := aw_sidx;
+        v.b_midx := aw_midx;
+        w_sidx_mux := aw_sidx;
+        w_midx_mux := aw_midx;
+    elsif w_fire = '1' and b_busy = '0' then
         v.b_sidx := r.w_sidx;
         v.b_midx := r.w_midx;
     elsif b_fire = '1' then
@@ -214,12 +235,12 @@ begin
     vslvi(aw_sidx).aw_id    := vmsto(aw_midx).aw_id;
     vslvi(aw_sidx).aw_user  := vmsto(aw_midx).aw_user;
 
-    vmsti(r.w_midx).w_ready := vslvo(r.w_sidx).w_ready and not b_busy;
-    vslvi(r.w_sidx).w_valid := vmsto(r.w_midx).w_valid and not b_busy;
-    vslvi(r.w_sidx).w_data := vmsto(r.w_midx).w_data;
-    vslvi(r.w_sidx).w_last := vmsto(r.w_midx).w_last;
-    vslvi(r.w_sidx).w_strb := vmsto(r.w_midx).w_strb;
-    vslvi(r.w_sidx).w_user := vmsto(r.w_midx).w_user;
+    vmsti(w_midx_mux).w_ready := vslvo(w_sidx_mux).w_ready and not b_busy;
+    vslvi(w_sidx_mux).w_valid := vmsto(w_midx_mux).w_valid and not b_busy;
+    vslvi(w_sidx_mux).w_data := vmsto(w_midx_mux).w_data;
+    vslvi(w_sidx_mux).w_last := vmsto(w_midx_mux).w_last;
+    vslvi(w_sidx_mux).w_strb := vmsto(w_midx_mux).w_strb;
+    vslvi(w_sidx_mux).w_user := vmsto(w_midx_mux).w_user;
 
     vmsti(r.b_midx).b_valid := vslvo(r.b_sidx).b_valid;
     vmsti(r.b_midx).b_resp := vslvo(r.b_sidx).b_resp;

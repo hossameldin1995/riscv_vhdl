@@ -172,14 +172,20 @@ begin
     when State_Idle =>
         if i_req_data_valid = '1' then
             if i_req_mem_ready = '1' then
-                v.state := State_WaitResp;
+                if i_req_data_write = '0' then
+                    v.state := State_WaitResp;
+                end if;
             else
                 v.state := State_WaitGrant;
             end if;
         end if;
     when State_WaitGrant =>
         if i_req_mem_ready = '1' then
-            v.state := State_WaitResp;
+            if i_req_data_write = '0' then
+                v.state := State_WaitResp;
+            else
+                v.state := State_Idle;
+            end if;
         end if;
     when State_WaitResp =>
         if i_resp_mem_data_valid = '1' then
@@ -190,7 +196,11 @@ begin
             else
                 -- New request
                 if i_req_mem_ready = '1' then
-                    v.state := State_WaitResp;
+                    if i_req_data_write = '0' then
+                        v.state := State_WaitResp;
+                    else
+                        v.state := State_Idle;
+                    end if;
                 else
                     v.state := State_WaitGrant;
                 end if;
@@ -198,7 +208,7 @@ begin
         end if;
     when State_WaitAccept =>
         if i_resp_data_ready = '1' then
-            if i_req_data_valid = '0' then
+            if i_req_data_valid = '0' or i_req_data_write = '1' then
                 v.state := State_Idle;
             else
                 if i_req_mem_ready = '1' then
@@ -272,8 +282,8 @@ begin
     o_req_mem_valid <= w_o_req_mem_valid;
     o_req_mem_addr <= wb_o_req_mem_addr;
     o_req_mem_write <= i_req_data_write;
-    o_req_mem_strob <= r.req_strob;
-    o_req_mem_data <= r.req_wdata;
+    o_req_mem_strob <= wb_o_req_strob;
+    o_req_mem_data <= wb_o_req_wdata;
     o_req_mem_len <= X"00";
     o_req_mem_burst <= "00";
     o_req_mem_last <= '1';
