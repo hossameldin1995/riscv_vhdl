@@ -68,6 +68,7 @@ begin
     variable v_r_valid : std_logic;
     variable v_r_last : std_logic;
     variable vb_r_data : std_logic_vector(CFG_SYSBUS_DATA_BITS-1 downto 0);
+    variable v_b_valid : std_logic;
 
   begin
 
@@ -96,6 +97,7 @@ begin
        v_wadr(1) := r.waddr(0);
     end if;
     v_we := (others => '0');
+    v_b_valid := '0';
 
     -- Reading state machine:
     case r.rstate is
@@ -202,7 +204,7 @@ begin
                 v.wstate := wtrans;
             else
                 -- AXI lite (no burst support)
-                v.b_valid := '1';
+                v_b_valid := '1';
                 v_we := (others => '1');
                 if i_xslvi.aw_bits.addr(2) = '0' then
                     v_wadr := v_wadr_inc;
@@ -236,7 +238,7 @@ begin
             end if;
             -- End of transaction:
             if r.wlen = 0 then
-                v.b_valid := '1';
+                v_b_valid := '1';
                 if i_xslvi.aw_valid = '0' then
                     v.wstate := wwait;
                 else
@@ -258,7 +260,9 @@ begin
         end if;
     end case;
 
-    if i_xslvi.b_ready = '1' and r.b_valid = '1' then
+    if v_b_valid = '1' then
+        v.b_valid := '1';
+    elsif i_xslvi.b_ready = '1' and r.b_valid = '1' then
         if r.wstate = wtrans and i_xslvi.w_valid = '1' and r.wlen = 0 then
             v.b_valid := '1';
         else

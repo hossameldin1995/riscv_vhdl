@@ -281,8 +281,7 @@ begin
         w_req_mem_valid := i.req_mem_valid or d.req_mem_valid;
         if d.req_mem_valid = '1' then
             v_data_req_ready := i_req_mem_ready;
-            v_data_resp_mem_data_valid := i_resp_mem_data_valid;
-            if i_req_mem_ready = '1' and d.req_mem_write = '0' then
+            if i_req_mem_ready = '1' then
                 v.state := State_DMem;
             end if;
         elsif i.req_mem_valid = '1' then
@@ -300,8 +299,8 @@ begin
         w_req_mem_valid := d.req_mem_last and (i.req_mem_valid or d.req_mem_valid);
         if i_resp_mem_data_valid = '1' and d.req_mem_last = '1' then
             if d.req_mem_valid = '1' then
-                if i_req_mem_ready = '1' and d.req_mem_write = '0' then
-                     v_data_req_ready := i_req_mem_ready;
+                v_data_req_ready := i_req_mem_ready;
+                if i_req_mem_ready = '1' then
                      v.state := State_DMem;
                 else
                     v.state := State_Idle;
@@ -327,8 +326,8 @@ begin
         w_req_mem_valid := i.req_mem_last and (i.req_mem_valid or d.req_mem_valid);
         if i_resp_mem_data_valid = '1' and i.req_mem_last = '1' then
             if d.req_mem_valid = '1' then
-                if i_req_mem_ready = '1' and d.req_mem_write = '0' then
-                    v_data_req_ready := i_req_mem_ready;
+                v_data_req_ready := i_req_mem_ready;
+                if i_req_mem_ready = '1' then
                     v.state := State_DMem;
                 else
                     v.state := State_Idle;

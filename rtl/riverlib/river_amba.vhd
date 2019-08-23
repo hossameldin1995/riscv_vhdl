@@ -89,7 +89,7 @@ begin
 
   o_mstcfg <= xconfig;
   w_resp_mem_data_valid <= i_msti.r_valid or (r.w_valid and i_msti.w_ready)
-                           or (i_msti.aw_ready and i_msti.w_ready);
+                           or (i_msti.b_valid and r.b_ready);
   -- Slave response resp = SLVERR (2'b10)
   -- Interconnect response resp = DECERR (2'b11):
   w_resp_mem_load_fault <= r.reading and i_msti.r_valid and i_msti.r_resp(1);
@@ -134,6 +134,7 @@ begin
     variable vmsto   : nasti_master_out_type;
     variable v_w_valid : std_logic;
     variable v_w_last : std_logic;
+    variable v_b_ready_lite : std_logic;
   begin
 
     v := r;
@@ -166,14 +167,14 @@ begin
 
     v_w_valid := r.w_valid;
     v_w_last := r.w_last;
+    v_b_ready_lite := '0';
     if (w_req_mem_valid and w_req_mem_write and i_msti.aw_ready) = '1' then
         v.w_addr := wb_req_mem_addr;
         -- not a burst operation only
         v_w_valid := '1';
         v_w_last := '1';
         if i_msti.w_ready = '1' then
-            v.b_addr := wb_req_mem_addr;
-            v.b_ready := '1';
+            v_b_ready_lite := '1';
         else
             v.w_valid := '1';
             v.w_last := '1';
@@ -188,7 +189,10 @@ begin
     vmsto.w_strb := wb_req_mem_strob;
     vmsto.w_data := wb_req_mem_data;
     
-    if (r.w_valid and i_msti.w_ready) = '1' then
+    if v_b_ready_lite = '1' then
+        v.b_addr := wb_req_mem_addr;
+        v.b_ready := '1';
+    elsif (r.w_valid and i_msti.w_ready) = '1' then
         v.b_addr := r.w_addr;
         v.b_ready := '1';
     elsif i_msti.b_valid = '1' then
