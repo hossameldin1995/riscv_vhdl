@@ -21,7 +21,7 @@ package gencomp is
 
 --! @brief   Total number of the known technologies.
 --! @details These values was inherited from the \e grlib library.
-constant NTECH : integer := 53;
+constant NTECH : integer := 54;
 
 --! Prototype of the data type for mapping name on certain index.
 type tech_ability_type is array (0 to NTECH) of integer;
@@ -83,6 +83,7 @@ constant artix7      : integer := 50; --! Not implemented.
 constant zynq7000    : integer := 51; --! Not implemented.
 constant rhlib13t    : integer := 52; --! Not implemented.
 constant mikron180   : integer := 53; --! Mikron 180nm. Use files with the '_micron180' suffix.
+constant cyclonevc5g : integer := 54; --! Supported. Use files with the '_c5g' suffix.
 
 --! @}
 
