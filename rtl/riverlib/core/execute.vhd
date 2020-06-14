@@ -24,7 +24,9 @@ use commonlib.types_common.all;
 library riverlib;
 --! RIVER CPU configuration constants.
 use riverlib.river_cfg.all;
-
+library work;
+--! Target dependable configuration: RTL, FPGA or ASIC.
+use work.config_target.all;
 
 entity InstrExecute is generic (
     async_reset : boolean;
@@ -181,8 +183,8 @@ architecture arch_InstrExecute of InstrExecute is
   signal wb_srlw : std_logic_vector(RISCV_ARCH-1 downto 0);
   signal wb_sra : std_logic_vector(RISCV_ARCH-1 downto 0);
   signal wb_sraw : std_logic_vector(RISCV_ARCH-1 downto 0);
-
-  component IntMul is generic (
+  
+ component IntMulCycloneV is generic (
     async_reset : boolean
   );
   port (
@@ -190,7 +192,6 @@ architecture arch_InstrExecute of InstrExecute is
     i_nrst : in std_logic;
     i_ena : in std_logic;
     i_unsigned : in std_logic;
-    i_hsu : in std_logic;
     i_high : in std_logic;
     i_rv32 : in std_logic;
     i_a1 : in std_logic_vector(RISCV_ARCH-1 downto 0);
@@ -199,7 +200,7 @@ architecture arch_InstrExecute of InstrExecute is
     o_valid : out std_logic;
     o_busy : out std_logic
   );
-  end component; 
+  end component;
 
   component IntDiv is generic (
     async_reset : boolean
@@ -254,22 +255,30 @@ architecture arch_InstrExecute of InstrExecute is
   end component; 
 
 begin
+   
+   mul_ena : if CFG_MUL_ENABLE generate
+      mul0 : IntMulCycloneV generic map (
+			async_reset => async_reset
+		) port map (
+			i_clk  => i_clk,
+			i_nrst => i_nrst,
+			i_ena => w_arith_ena(Multi_MUL),
+			i_unsigned => i_unsigned_op,
+			i_high => w_arith_residual_high,
+			i_rv32 => i_rv32,
+			i_a1 => wb_rdata1,
+			i_a2 => wb_rdata2,
+			o_res => wb_arith_res(Multi_MUL),
+			o_valid => w_arith_valid(Multi_MUL),
+			o_busy => w_arith_busy(Multi_MUL)
+		);
+   end generate;
 
-   mul0 : IntMul generic map (
-      async_reset => async_reset
-   ) port map (
-      i_clk  => i_clk,
-      i_nrst => i_nrst,
-      i_ena => w_arith_ena(Multi_MUL),
-      i_unsigned => i_unsigned_op,
-      i_hsu => w_mul_hsu,
-      i_high => w_arith_residual_high,
-      i_rv32 => i_rv32,
-      i_a1 => wb_rdata1,
-      i_a2 => wb_rdata2,
-      o_res => wb_arith_res(Multi_MUL),
-      o_valid => w_arith_valid(Multi_MUL),
-      o_busy => w_arith_busy(Multi_MUL));
+   mul_dis : if not CFG_MUL_ENABLE generate
+      wb_arith_res(Multi_MUL)		<= (others => '0');
+		w_arith_valid(Multi_MUL)	<= '0';
+		w_arith_busy(Multi_MUL)		<= '0';
+   end generate;
 
    div0 : IntDiv generic map (
       async_reset => async_reset
