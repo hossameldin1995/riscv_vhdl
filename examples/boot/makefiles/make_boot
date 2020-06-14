@@ -5,14 +5,19 @@ CPP=riscv64-unknown-elf-gcc
 OBJDUMP=riscv64-unknown-elf-objdump
 
 FPU_ENABLED=0
+Cyclone_V=1
 
-CFLAGS= -c -g -static -std=gnu99 -O0 -fno-common -fno-builtin-printf -DSYS_HZ=40000000
+CFLAGS= -c -g -static -std=gnu99 -O0 -fno-common -fno-builtin-printf
 ifeq ($(FPU_ENABLED), 1)
   CFLAGS += -march=rv64imafd -DFPU_ENABLED
 else
   CFLAGS += -march=rv64imac -mabi=lp64
 endif
-
+ifeq ($(Cyclone_V), 1)
+  CFLAGS += -DSYS_HZ=100000000
+else
+  CFLAGS += -DSYS_HZ=40000000
+endif
 
 LDFLAGS=-T test.ld -nostdlib -nostartfiles
 ifeq ($(FPU_ENABLED), 1)
@@ -49,6 +54,7 @@ OBJ_FILES = $(addsuffix .o,$(SOURCES))
 EXECUTABLE = bootimage
 DUMPFILE = $(EXECUTABLE).dump
 HEXFILE = $(EXECUTABLE).hex
+MIFFILE = $(EXECUTABLE).mif
 LSTFILE = $(EXECUTABLE).lst
 
 all: boot
@@ -56,7 +62,12 @@ all: boot
 .PHONY: $(EXECUTABLE) $(DUMPFILE)
 
 
-boot: $(EXECUTABLE) $(DUMPFILE) $(HEXFILE)
+boot: $(EXECUTABLE) $(DUMPFILE) $(HEXFILE) $(MIFFILE)
+
+$(MIFFILE): $(EXECUTABLE)
+	echo hex2mif $(ELF_DIR)/$(HEXFILE) $(ELF_DIR)/$(MIFFILE) 4096
+	hex2mif $(ELF_DIR)/$(HEXFILE) $(ELF_DIR)/$(MIFFILE) 4096
+
 $(HEXFILE): $(EXECUTABLE)
 	echo elf2rawx $(addprefix $(ELF_DIR)/,$<) -h -f 32768 -l 8 -o $(addprefix $(ELF_DIR)/,$(EXECUTABLE).hex)
 	elf2rawx $(addprefix $(ELF_DIR)/,$<) -h -f 32768 -l 8 -o $(addprefix $(ELF_DIR)/,$(EXECUTABLE).hex)

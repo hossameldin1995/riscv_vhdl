@@ -18,7 +18,7 @@
 #include "axi_maps.h"
 #include "encoding.h"
 
-static const int FW_IMAGE_SIZE_BYTES = 1 << 18;
+static const int FW_IMAGE_SIZE_BYTES = 1 << 17;
 
 int fw_get_cpuid() {
     int ret;
@@ -75,13 +75,16 @@ void copy_image() {
     tech = pnp->tech & 0xFF;
 
     if (tech != TECH_INFERRED && pnp->fwid == 0) {
-        if (get_dip(0) == 1) {
+        /*if (get_dip(0) == 1) {
             print_uart("Coping FLASH\r\n", 14);
             memcpy(sram, flash, FW_IMAGE_SIZE_BYTES);
         } else {
             print_uart("Coping FWIMAGE\r\n", 16);
             memcpy(sram, fwrom, FW_IMAGE_SIZE_BYTES);
-        }
+        }*/
+        print_uart("Coping FWIMAGE\r\n", 16);
+        memcpy(sram, fwrom, FW_IMAGE_SIZE_BYTES);
+
     }
     // Write Firmware ID to avoid copy image after soft-reset.
     pnp->fwid = 0x20191025;

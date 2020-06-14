@@ -52,13 +52,30 @@ architecture rtl of Rom_tech is
     data    : out std_logic_vector(CFG_SYSBUS_DATA_BITS-1 downto 0)
   );
   end component;
+  
+  component Rom_c5g is
+  generic (
+    abits : integer;
+    cyc_miffile : string
+  );
+  port (
+    clk     : in  std_ulogic;
+    address : in global_addr_array_type;
+    data    : out std_logic_vector(CFG_SYSBUS_DATA_BITS-1 downto 0)
+  );
+  end component;
 
 begin
 
-  genrom0 : if memtech = inferred or is_fpga(memtech) /= 0 generate
+  genrom0 : if memtech = inferred or (is_fpga(memtech) /= 0 and memtech /= cyclonevc5g) generate
       infer0 : Rom_inferred  generic map (abits, sim_hexfile)
                port map (clk, address, data);
-  end generate;
+	end generate;
+  
+	genrom1 : if memtech = inferred or (is_fpga(memtech) /= 0 and memtech = cyclonevc5g) generate
+		infer0 : Rom_c5g  generic map (abits, sim_hexfile)
+               port map (clk, address, data);
+	end generate;
 
 end; 
 
