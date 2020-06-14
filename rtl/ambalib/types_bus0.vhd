@@ -46,22 +46,10 @@ constant CFG_BUS0_XSLV_UART1    : integer := 3;
 constant CFG_BUS0_XSLV_GPIO     : integer := 4;
 --! Configuration index of the Interrupt Controller module.
 constant CFG_BUS0_XSLV_IRQCTRL  : integer := 5;
---! Configuration index of the GNSS Sub-System.
-constant CFG_BUS0_XSLV_GNSS_SS  : integer := 6;
---! External Flash IC connected via SPI interface.
-constant CFG_BUS0_XSLV_EXTFLASH : integer := 7;
---! Configuration index of the Ethernet MAC module.
-constant CFG_BUS0_XSLV_ETHMAC   : integer := 8;
 --! Configuration index of the Debug Support Unit module.
-constant CFG_BUS0_XSLV_DSU      : integer := 9;
---! Configuration index of the Debug Support Unit module.
-constant CFG_BUS0_XSLV_GPTIMERS : integer := 10;
---! Configuration index of the Mikron OTP 8 KB bank.
-constant CFG_BUS0_XSLV_OTP      : integer := 11;
---! Configuration index of the Plug-n-Play module.
-constant CFG_BUS0_XSLV_PNP      : integer := 12;
+constant CFG_BUS0_XSLV_GPTIMERS : integer := 6;
 --! Total number of the slaves devices.
-constant CFG_BUS0_XSLV_TOTAL    : integer := 13;
+constant CFG_BUS0_XSLV_TOTAL    : integer := 7;
 --! @}
 
 --! @defgroup master_id_group AXI4 masters generic IDs.
@@ -74,14 +62,8 @@ constant CFG_BUS0_XSLV_TOTAL    : integer := 13;
 constant CFG_BUS0_XMST_CPU0     : integer := 0;
 --! Uncached TileLinkIO bus.
 constant CFG_BUS0_XMST_CPU1     : integer := 1;
---! Ethernet MAC master interface generic index.
-constant CFG_BUS0_XMST_ETHMAC   : integer := 2;
---! Tap via UART (debug port) generic index.
-constant CFG_BUS0_XMST_MSTUART  : integer := 3;
---! Tap via JTAG generic index.
-constant CFG_BUS0_XMST_JTAG     : integer := 4;
 --! Total Number of master devices on system bus.
-constant CFG_BUS0_XMST_TOTAL    : integer := 5;
+constant CFG_BUS0_XMST_TOTAL    : integer := 2;
 --! @}
 
 

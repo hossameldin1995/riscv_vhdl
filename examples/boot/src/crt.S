@@ -1,18 +1,18 @@
 ##!  Register 	ABI Name 	Description 			Saver
-##!  x0 	zero 		Hard-wired zero 		—
+##!  x0 	zero 		Hard-wired zero 		ï¿½
 ##!  x1 	ra 		Return address 			Caller
 ##!  x2 	s0/fp 		Saved register/frame pointer 	Callee
-##!  x3–13 	s1–11 		Saved registers 		Callee
+##!  x3ï¿½13 	s1ï¿½11 		Saved registers 		Callee
 ##!  x14 	sp 		Stack pointer 			Callee
 ##!  x15 	tp 		Thread pointer 			Callee   
-##!  x16–17 	v0–1 		Return values 			Caller
-##!  x18–25 	a0–7 		Function arguments 		Caller
-##!  x26–30 	t0–4 		Temporaries 			Caller
-##!  x31 	gp 		Global 	pointer 		—
-##!  f0–15 	fs0–15 		FP saved registers 		Callee
-##!  f16–17 	fv0–1 		FP return values 		Caller
-##!  f18–25 	fa0–7 		FP arguments 			Caller
-##!  f26–31 	ft0–5 		FP temporaries 			Caller
+##!  x16ï¿½17 	v0ï¿½1 		Return values 			Caller
+##!  x18ï¿½25 	a0ï¿½7 		Function arguments 		Caller
+##!  x26ï¿½30 	t0ï¿½4 		Temporaries 			Caller
+##!  x31 	gp 		Global 	pointer 		ï¿½
+##!  f0ï¿½15 	fs0ï¿½15 		FP saved registers 		Callee
+##!  f16ï¿½17 	fv0ï¿½1 		FP return values 		Caller
+##!  f18ï¿½25 	fa0ï¿½7 		FP arguments 			Caller
+##!  f26ï¿½31 	ft0ï¿½5 		FP temporaries 			Caller
 
 #include "encoding.h"
 
@@ -178,7 +178,7 @@ _start:
   csrr a0, mhartid            # a0 <= MHARTID value
 
 #define SRAM_BASE_ADDR  0x10000000
-#define SRAM_SIZE_BYTES (1<<19)
+#define SRAM_SIZE_BYTES (1<<18)
 #define STACK_CORE1_BYTES 4096
 
   li  sp, SRAM_BASE_ADDR+SRAM_SIZE_BYTES

@@ -32,19 +32,19 @@ package config_target is
 
   --! @brief   Number of processors in a system
   --! @details This value may be in a range 1 to CFG_TOTAL_CPU_MAX-1
-  constant CFG_CPU_NUM : integer := 4;
+  constant CFG_CPU_NUM : integer := 1;
 
   --! @brief   HEX-image for the initialization of the Boot ROM.
   --! @details This file is used by \e inferred ROM implementation.
   constant CFG_SIM_BOOTROM_HEX : string := 
-              CFG_TOPDIR & "examples/boot/linuxbuild/bin/bootimage.hex";
+              CFG_TOPDIR & "examples/boot/linuxbuild/bin/bootimage.mif";
 --              CFG_TOPDIR & "examples/bootrom_tests/linuxbuild/bin/bootrom_tests.hex";
 
   --! @brief   HEX-image for the initialization of the FwImage ROM.
   --! @details This file is used by \e inferred ROM implementation.
   constant CFG_SIM_FWIMAGE_HEX : string := 
 --                CFG_TOPDIR & "examples/zephyr/gcc711/zephyr.hex";
-                CFG_TOPDIR & "examples/dhrystone21/makefiles/bin/dhrystone21.hex";
+                CFG_TOPDIR & "examples/helloworld/makefiles/bin/helloworld.mif";
                
 
   --! @brief Hardware SoC Identificator.
@@ -71,5 +71,18 @@ package config_target is
 
   --! Coherent bridge with L2-cache
   constant CFG_L2CACHE_ENA : boolean := false;
+  
+  --! 
+  constant CFG_FPU_ENABLE : boolean := false;
+  constant CFG_MUL_ENABLE : boolean := false;
+  constant CFG_DIV_ENABLE : boolean := false;
+  
+  --! Memory sizes
+  constant CFG_RAM_MASK     : integer := 16#fffc0#; -- 256 KB mask
+  constant CFG_RAM_SIZE     : integer := 256;       -- 256 KB address
+  constant CFG_ROM_MASK     : integer := 16#ffff8#; -- 32  KB mask
+  constant CFG_ROM_SIZE     : integer := 32;        -- 32  KB address
+  constant CFG_ROM_APP_MASK : integer := 16#ffff0#; -- 64  KB mask
+  constant CFG_ROM_APP_SIZE : integer := 64;        -- 64  KB address
 
 end;

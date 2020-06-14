@@ -77,6 +77,15 @@ architecture rtl of SysPLL_tech is
     RESET       : in     std_logic;
     LOCKED      : out    std_logic );
   end component;
+  
+  component SysPLL_c5g is
+  port (
+    refclk   : in  std_logic := 'X'; -- clk
+    rst      : in  std_logic := 'X'; -- reset
+    outclk_0 : out std_logic;        -- clk
+    locked   : out std_logic         -- export
+  );
+  end component;
 
 begin
 
@@ -98,6 +107,10 @@ begin
    
    m180 : if tech = mikron180 generate
      pll0 : SysPLL_micron180 port map (i_clk_tcxo, o_clk_bus, i_reset, o_locked);
+   end generate;
+	
+	c5g : if tech = cyclonevc5g generate
+     pll0 : SysPLL_c5g port map (i_clk_tcxo, i_reset, o_clk_bus, o_locked);
    end generate;
 
 end;

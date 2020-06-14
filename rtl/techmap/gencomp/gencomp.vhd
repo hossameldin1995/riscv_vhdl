@@ -98,7 +98,7 @@ constant is_fpga : tech_ability_type :=
 	 stratix3 => 1, cyclone3 => 1, axdsp => 1,
 	 spartan6 => 1, virtex6 => 1, actfus => 1,
 	 stratix4 => 1, apa3e => 1, apa3l => 1, virtex7 => 1, kintex7 => 1,
-	 artix7 => 1, zynq7000 => 1,
+	 artix7 => 1, zynq7000 => 1, cyclonevc5g => 1,
 	 others => 0);
 
 end;
