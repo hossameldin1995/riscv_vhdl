@@ -106,8 +106,6 @@ component riscv_soc is port
   i_gpio     : in std_logic_vector(11 downto 0);
   o_gpio     : out std_logic_vector(11 downto 0);
   o_gpio_dir : out std_logic_vector(11 downto 0);
-  --! GPTimers
-  o_pwm : out std_logic_vector(1 downto 0);
   --! UART1 signals:
   i_uart1_ctsn : in std_logic;
   i_uart1_rd   : in std_logic;
@@ -158,7 +156,6 @@ begin
     i_gpio     => ib_gpio_ipins,
     o_gpio     => ob_gpio_opins,
     o_gpio_dir => ob_gpio_direction,
-    o_pwm => open,
     --! UART1 signals:
     i_uart1_ctsn => '0',
     i_uart1_rd   => UART_RX,

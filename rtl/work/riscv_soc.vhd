@@ -137,28 +137,9 @@ begin
     i_ext_irq => w_ext_irq
   );
 
-  dualcore_ena : if CFG_COMMON_DUAL_CORE_ENABLE generate
-      cpu1 : river_amba generic map (
-        memtech  => CFG_MEMTECH,
-        hartid => 1,
-        async_reset => CFG_ASYNC_RESET
-      ) port map ( 
-        i_nrst   => w_bus_nrst,
-        i_clk    => i_clk,
-        i_msti   => aximi(CFG_BUS0_XMST_CPU1),
-        o_msto   => aximo(CFG_BUS0_XMST_CPU1),
-        o_mstcfg => mst_cfg(CFG_BUS0_XMST_CPU1),
-        i_dport => dport_i(1),
-        o_dport => dport_o(1),
-        i_ext_irq => '0'  -- todo: 
-      );
-  end generate;
-
-  dualcore_dis : if not CFG_COMMON_DUAL_CORE_ENABLE generate
-      aximo(CFG_BUS0_XMST_CPU1) <= axi4_master_out_none;
-      mst_cfg(CFG_BUS0_XMST_CPU1) <= axi4_master_config_none;
-		dport_o(1) <= dport_out_none;
-  end generate;
+  aximo(CFG_BUS0_XMST_CPU1) <= axi4_master_out_none;
+  mst_cfg(CFG_BUS0_XMST_CPU1) <= axi4_master_config_none;
+  dport_o(1) <= dport_out_none;
 
 
 
@@ -303,9 +284,6 @@ begin
     o_axi  => axiso(CFG_BUS0_XSLV_GPTIMERS),
     o_irq  => irq_pins(CFG_IRQ_GPTIMERS)
   );
-
-
-
 
 
 end arch_riscv_soc;

@@ -22,7 +22,9 @@ use commonlib.types_common.all;
 library riverlib;
 --! RIVER CPU configuration constants.
 use riverlib.river_cfg.all;
-
+library work;
+--! Target dependable configuration: RTL, FPGA or ASIC.
+use work.config_target.all;
 
 entity Processor is
   generic (
@@ -428,7 +430,7 @@ begin
         o_ra => ireg.ra,   -- Return address
         o_sp => ireg.sp);
 
-    fpuena : if CFG_HW_FPU_ENABLE generate
+    fpuena : if CFG_FPU_ENABLE generate
       fregs0 : RegFloatBank generic map (
         async_reset => async_reset
       ) port map (
@@ -448,7 +450,7 @@ begin
         o_dport_rdata => freg.dport_rdata);
     end generate;
 
-    fpudis : if not CFG_HW_FPU_ENABLE generate
+    fpudis : if not CFG_FPU_ENABLE generate
         freg.rdata1 <= (others => '0');
         freg.rdata2 <= (others => '0');
         freg.dport_rdata <= (others => '0');

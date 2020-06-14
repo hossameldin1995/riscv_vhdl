@@ -22,7 +22,9 @@ use commonlib.types_common.all;
 library riverlib;
 --! RIVER CPU configuration constants.
 use riverlib.river_cfg.all;
-
+library work;
+--! Target dependable configuration: RTL, FPGA or ASIC.
+use work.config_target.all;
 
 entity InstrDecoder is generic (
     async_reset : boolean
@@ -667,7 +669,7 @@ begin
             end case;
 
         when others =>
-            if CFG_HW_FPU_ENABLE then
+            if CFG_FPU_ENABLE then
                 case wb_opcode1 is
                 when OPCODE_FPU_LD =>
                     wb_isa_type(ISA_I_type) := '1';

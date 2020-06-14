@@ -23,6 +23,9 @@ use commonlib.types_common.all;
 library riverlib;
 --! RIVER CPU configuration constants.
 use riverlib.river_cfg.all;
+library work;
+--! Target dependable configuration: RTL, FPGA or ASIC.
+use work.config_target.all;
 
 entity CsrRegs is 
   generic (
@@ -139,7 +142,7 @@ architecture arch_CsrRegs of CsrRegs is
         ordata(2) := ir.ex_fpu_overflow;
         ordata(3) := ir.ex_fpu_divbyzero;
         ordata(4) := ir.ex_fpu_invalidop;
-        if CFG_HW_FPU_ENABLE then
+        if CFG_FPU_ENABLE then
             if iwena = '1' then
                 ov.ex_fpu_inexact := iwdata(0);
                 ov.ex_fpu_underflow := iwdata(1);
@@ -149,7 +152,7 @@ architecture arch_CsrRegs of CsrRegs is
             end if;
         end if;
     when CSR_frm =>
-        if CFG_HW_FPU_ENABLE then
+        if CFG_FPU_ENABLE then
             ordata(2 downto 0) := "100";  -- Round mode: round to Nearest (RMM)
         end if;
     when CSR_fcsr =>
@@ -158,7 +161,7 @@ architecture arch_CsrRegs of CsrRegs is
         ordata(2) := ir.ex_fpu_overflow;
         ordata(3) := ir.ex_fpu_divbyzero;
         ordata(4) := ir.ex_fpu_invalidop;
-        if CFG_HW_FPU_ENABLE then
+        if CFG_FPU_ENABLE then
             ordata(7 downto 5) := "100";  -- Round mode: round to Nearest (RMM)
             if iwena = '1' then
                 ov.ex_fpu_inexact := iwdata(0);
@@ -207,7 +210,7 @@ architecture arch_CsrRegs of CsrRegs is
         ordata(12) := '1';
         ordata(20) := '1';
         ordata(2) := '1';
-        if CFG_HW_FPU_ENABLE then
+        if CFG_FPU_ENABLE then
             ordata(3) := '1';
         end if;
     when CSR_mvendorid =>
@@ -223,7 +226,7 @@ architecture arch_CsrRegs of CsrRegs is
         ordata(3) := ir.mie;
         ordata(7) := ir.mpie;
         ordata(12 downto 11) := ir.mpp;
-        if CFG_HW_FPU_ENABLE then
+        if CFG_FPU_ENABLE then
             ordata(14 downto 13) := "01";  -- FS field: Initial state
         end if;
         ordata(33 downto 32) := "10";  -- UXL: User mode supported 64-bits

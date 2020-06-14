@@ -265,7 +265,7 @@ begin
 		) port map (
 			i_clk  => i_clk,
 			i_nrst => i_nrst,
-			i_ena => r.multi_ena(Multi_MUL)(Multi_MUL),
+			i_ena => r.multi_ena(Multi_MUL),
 			i_unsigned => r.multi_unsigned,
 			i_high => r.multi_residual_high,
 			i_rv32 => r.multi_rv32,
@@ -308,7 +308,7 @@ begin
       o_srlw => wb_srlw,
       o_sraw => wb_sraw);
 
-  fpuena : if CFG_HW_FPU_ENABLE generate
+  fpuena : if CFG_FPU_ENABLE generate
      fpu0 : FpuTop generic map (
         async_reset => async_reset
      ) port map (
@@ -329,7 +329,7 @@ begin
      );
   end generate;
 
-  fpudis : if not CFG_HW_FPU_ENABLE generate
+  fpudis : if not CFG_FPU_ENABLE generate
         wb_arith_res(Multi_FPU) <= (others => '0');
         w_arith_valid(Multi_FPU) <= '0';
         w_arith_busy(Multi_FPU) <= '0';
@@ -431,7 +431,7 @@ begin
         wb_rdata1 := i_rdata1;
         wb_radr2 := ('0' & i_d_instr(24 downto 20));
         wb_rdata2 := i_rdata2;
-        if CFG_HW_FPU_ENABLE and i_f64 = '1' then
+        if CFG_FPU_ENABLE and i_f64 = '1' then
             if (wv(Instr_FMOV_D_X) or
                 wv(Instr_FCVT_D_L) or wv(Instr_FCVT_D_LU) or
                 wv(Instr_FCVT_D_W) or wv(Instr_FCVT_D_WU)) = '0' then
@@ -482,7 +482,7 @@ begin
         wb_off(RISCV_ARCH-1 downto 12) := wb_mask_i31(RISCV_ARCH-1 downto 12);
         wb_off(11 downto 5) := i_d_instr(31 downto 25);
         wb_off(4 downto 0) := i_d_instr(11 downto 7);
-        if CFG_HW_FPU_ENABLE and wv(Instr_FSD) = '1' then
+        if CFG_FPU_ENABLE and wv(Instr_FSD) = '1' then
             wb_radr2 := ('1' & i_d_instr(24 downto 20));
             wb_rdata2 := i_rfdata2;
         end if;
@@ -492,7 +492,7 @@ begin
     --! If instruction is multicycle then modify this value.
     --!
     w_fpu_ena := '0';
-    if CFG_HW_FPU_ENABLE then
+    if CFG_FPU_ENABLE then
         if i_f64 = '1' and (wv(Instr_FSD) or wv(Instr_FLD)) = '0' then
             w_fpu_ena := '1';
         end if;
@@ -519,7 +519,7 @@ begin
         v.multiclock_ena := '0';
     elsif w_res_wena = '1' then
         wb_res_addr := ('0' & i_d_instr(11 downto 7));
-        if CFG_HW_FPU_ENABLE then
+        if CFG_FPU_ENABLE then
             if i_f64 = '1' and wv(Instr_FLD) = '1' then
                 wb_res_addr(5) := '1';
             end if;
@@ -755,7 +755,7 @@ begin
     if (w_multi_ena and w_next_ready) = '1' then
         v.multiclock_ena := '1';
         v.multi_res_addr := wb_res_addr;
-        if CFG_HW_FPU_ENABLE then
+        if CFG_FPU_ENABLE then
             v.multi_ivec_fpu := wv(Instr_FSUB_D downto Instr_FADD_D);
             if w_fpu_ena = '1' and (wv(Instr_FMOV_X_D) or wv(Instr_FEQ_D)
                 or wv(Instr_FLT_D) or wv(Instr_FLE_D)
