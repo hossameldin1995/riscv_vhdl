@@ -47,17 +47,3 @@ void fw_disable_isr(int idx) {
     irqctrl_map *p_irq = (irqctrl_map *)ADDR_BUS0_XSLV_IRQCTRL;
     p_irq->irq_mask |= (1ul << idx);
 }
-
-void led_set(int output) {
-    // [3:0] DIP pins
-    ((gpio_map *)ADDR_BUS0_XSLV_GPIO)->ouser = (output << 4);
-}
-
-int is_simulation() {
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
-    if (pnp->tech & 0xFF) {
-        // not inferred
-        return 0;
-    }
-    return 1;
-}

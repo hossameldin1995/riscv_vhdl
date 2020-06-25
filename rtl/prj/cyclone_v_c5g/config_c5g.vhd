@@ -37,7 +37,7 @@ package config_target is
   --! @brief   HEX-image for the initialization of the Boot ROM.
   --! @details This file is used by \e inferred ROM implementation.
   constant CFG_SIM_BOOTROM_HEX : string := 
-              CFG_TOPDIR & "examples/boot/linuxbuild/bin/bootimage.mif";
+              CFG_TOPDIR & "examples/bootrom_tests/linuxbuild/bin/bootrom_tests.mif";
 --              CFG_TOPDIR & "examples/bootrom_tests/linuxbuild/bin/bootrom_tests.hex";
 
   --! @brief   HEX-image for the initialization of the FwImage ROM.
@@ -73,16 +73,15 @@ package config_target is
   constant CFG_L2CACHE_ENA : boolean := false;
   
   --! 
-  constant CFG_FPU_ENABLE : boolean := false;
-  constant CFG_MUL_ENABLE : boolean := false;
-  constant CFG_DIV_ENABLE : boolean := false;
+  constant CFG_FPU_ENABLE : boolean := true;
+  constant CFG_MUL_ENABLE : boolean := true;
+  constant CFG_DIV_ENABLE : boolean := true;
   
   --! Memory sizes
   constant CFG_RAM_MASK     : integer := 16#fffc0#; -- 256 KB mask
   constant CFG_RAM_SIZE     : integer := 256;       -- 256 KB address
-  constant CFG_ROM_MASK     : integer := 16#ffff8#; -- 32  KB mask
-  constant CFG_ROM_SIZE     : integer := 32;        -- 32  KB address
-  constant CFG_ROM_APP_MASK : integer := 16#ffff0#; -- 64  KB mask
-  constant CFG_ROM_APP_SIZE : integer := 64;        -- 64  KB address
+  
+  constant CFG_ROM_MASK     : integer := 16#ffff0#; -- 64  KB mask
+  constant CFG_ROM_SIZE     : integer := 64;        -- 64  KB address
 
 end;

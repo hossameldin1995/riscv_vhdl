@@ -34,7 +34,7 @@ use riverlib.river_cfg.all;
 --! @brief   Declaration of components visible on SoC top level.
 package types_river is
 
-constant CFG_CORES_PER_DSU_MAX : integer := 2;
+constant CFG_CORES_PER_DSU_MAX : integer := 1;
 
 type dport_in_type is record
     valid : std_logic;

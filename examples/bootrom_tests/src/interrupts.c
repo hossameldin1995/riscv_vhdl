@@ -44,7 +44,10 @@ long interrupt_handler_c(long cause, long epc, long long regs[32]) {
      * Rise interrupt from the software maybe done sending a self-IPI:
      *      csrwi mipi, 0
      */
+    struct io_per io_per_d;
+
     irqctrl_map *p_irqctrl = (irqctrl_map *)ADDR_BUS0_XSLV_IRQCTRL;
+    io_per_d.registers = (volatile void *)ADDR_BUS0_XSLV_GPIO;
     IRQ_HANDLER *isr_table = (IRQ_HANDLER *)p_irqctrl->isr_table;
     uint32_t pending;
     csr_mcause_type mcause;
@@ -67,14 +70,18 @@ long interrupt_handler_c(long cause, long epc, long long regs[32]) {
             pending >>= 1;
         }
     } else {
-       print_uart("mcause:", 7);
-       print_uart_hex(cause);
-       print_uart(",mepc:", 6);
-       print_uart_hex(epc);
-       print_uart("\r\n", 2);
-       /// Exception trap
-       led_set(0xF0);
-       while (1) {}
+        print_uart("mcause:", 7);
+        print_uart_hex(cause);
+        print_uart(",mepc:", 6);
+        print_uart_hex(epc);
+        print_uart("\r\n", 2);
+        
+        /// Exception trap
+        io_per_set_output(&io_per_d, LEDR, 0, LED_ON);
+        io_per_set_output(&io_per_d, LEDR, 1, LED_ON);
+        io_per_set_output(&io_per_d, LEDR, 2, LED_ON);
+        io_per_set_output(&io_per_d, RWD, 0, 0);
+        while (1) {}
     }
 
     return epc;

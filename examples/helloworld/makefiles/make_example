@@ -4,8 +4,20 @@ CC=riscv64-unknown-elf-gcc
 CPP=riscv64-unknown-elf-gcc
 OBJDUMP=riscv64-unknown-elf-objdump
 
+FPU_ENABLED=1
+
 CFLAGS= -c -fPIC -g -O0
+ifeq ($(FPU_ENABLED), 1)
+  CFLAGS += -march=rv64imafd -DFPU_ENABLED
+else
+  CFLAGS += -march=rv64imac -mabi=lp64
+endif
+
 LDFLAGS=-static -T app.ld -nostartfiles
+ifeq ($(FPU_ENABLED), 1)
+else
+  LDFLAGS += -march=rv64imac -mabi=lp64
+endif
 INCL_KEY=-I
 DIR_KEY=-B
 
@@ -46,12 +58,12 @@ all: example
 example: $(EXECUTABLE) $(DUMPFILE) $(HEXFILE) $(MIFFILE)
 
 $(MIFFILE): $(EXECUTABLE)
-	echo hex2mif $(ELF_DIR)/$(HEXFILE) $(ELF_DIR)/$(MIFFILE) 16384
-	hex2mif $(ELF_DIR)/$(HEXFILE) $(ELF_DIR)/$(MIFFILE) 16384
+	echo hex2mif $(ELF_DIR)/$(HEXFILE) $(ELF_DIR)/$(MIFFILE) 8192
+	hex2mif $(ELF_DIR)/$(HEXFILE) $(ELF_DIR)/$(MIFFILE) 8192
 
 $(HEXFILE): $(EXECUTABLE)
-	echo elf2rawx $(addprefix $(ELF_DIR)/,$<) -h -f 131072 -l 8 -o $(addprefix $(ELF_DIR)/,$(EXECUTABLE).hex)
-	elf2rawx $(addprefix $(ELF_DIR)/,$<) -h -f 131072 -l 8 -o $(addprefix $(ELF_DIR)/,$(EXECUTABLE).hex)
+	echo elf2rawx $(addprefix $(ELF_DIR)/,$<) -h -f 65536 -l 8 -o $(addprefix $(ELF_DIR)/,$(EXECUTABLE).hex)
+	elf2rawx $(addprefix $(ELF_DIR)/,$<) -h -f 65536 -l 8 -o $(addprefix $(ELF_DIR)/,$(EXECUTABLE).hex)
 
 $(DUMPFILE): $(EXECUTABLE)
 	echo $(OBJDUMP) --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.data $(addprefix $(ELF_DIR)/,$<) > $(addprefix $(ELF_DIR)/,$@)

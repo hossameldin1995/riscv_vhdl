@@ -41,10 +41,8 @@ library riverlib;
 --! River top level with AMBA interface module declaration
 use riverlib.types_river.all;
 
- --! Top-level implementaion library
-library work;
---! Target dependable configuration: RTL, FPGA or ASIC.
-use work.config_target.all;
+library target;
+use target.config_target.all;
 
 --! @brief   SOC Top-level entity declaration.
 --! @details This module implements full SOC functionality and all IO signals
@@ -53,15 +51,23 @@ entity riscv_soc is port
 ( 
   i_rst : in std_logic;
   i_clk  : in std_logic;
-  --! GPIO.
-  i_gpio     : in std_logic_vector(11 downto 0);
-  o_gpio     : out std_logic_vector(11 downto 0);
-  o_gpio_dir : out std_logic_vector(11 downto 0);
   --! UART1 signals:
   i_uart1_ctsn : in std_logic;
   i_uart1_rd   : in std_logic;
   o_uart1_td   : out std_logic;
-  o_uart1_rtsn : out std_logic
+  o_uart1_rtsn : out std_logic;
+  --! GPIO
+  KEY				: in std_logic_vector(3 DOWNTO 0);
+  SW				: in std_logic_vector(9 DOWNTO 0);
+  LEDG			: out std_logic_vector(7 DOWNTO 0);
+  LEDR			: out std_logic_vector(9 DOWNTO 0);
+  GPIO_IN		: in std_logic_vector(17 DOWNTO 0);
+  GPIO_OUT		: out std_logic_vector(17 DOWNTO 0);
+  --! Time measurements
+  HEX0			: out std_logic_vector(6 DOWNTO 0);
+  HEX1			: out std_logic_vector(6 DOWNTO 0);
+  HEX2			: out std_logic_vector(6 DOWNTO 0);
+  HEX3			: out std_logic_vector(6 DOWNTO 0)
 );
   --! @}
 
@@ -137,12 +143,6 @@ begin
     i_ext_irq => w_ext_irq
   );
 
-  aximo(CFG_BUS0_XMST_CPU1) <= axi4_master_out_none;
-  mst_cfg(CFG_BUS0_XMST_CPU1) <= axi4_master_config_none;
-  dport_o(1) <= dport_out_none;
-
-
-
   ------------------------------------
   --! @brief BOOT ROM module instance with the AXI4 interface.
   --! @details Map address:
@@ -159,25 +159,6 @@ begin
     cfg  => slv_cfg(CFG_BUS0_XSLV_BOOTROM),
     i    => axisi(CFG_BUS0_XSLV_BOOTROM),
     o    => axiso(CFG_BUS0_XSLV_BOOTROM)
-  );
-
-  ------------------------------------
-  --! @brief Firmware Image ROM with the AXI4 interface.
-  --! @details Map address:
-  --!          0x00100000..0x0013ffff (256 KB total)
-  --! @warning Don't forget to change ROM_ADDR_WIDTH in rom implementation
-  img0 : axi4_rom generic map (
-    memtech  => CFG_MEMTECH,
-    async_reset => CFG_ASYNC_RESET,
-    xaddr    => 16#00100#,
-    xmask    => CFG_ROM_APP_MASK,
-    sim_hexfile => CFG_SIM_FWIMAGE_HEX
-  ) port map (
-    clk  => i_clk,
-    nrst => w_glob_nrst,
-    cfg  => slv_cfg(CFG_BUS0_XSLV_ROMIMAGE),
-    i    => axisi(CFG_BUS0_XSLV_ROMIMAGE),
-    o    => axiso(CFG_BUS0_XSLV_ROMIMAGE)
   );
 
   ------------------------------------
@@ -208,17 +189,19 @@ begin
     async_reset => CFG_ASYNC_RESET,
     xaddr    => 16#80000#,
     xmask    => 16#fffff#,
-    xirq     => 0,
-    width    => 12
+    xirq     => 0
   ) port map (
-    clk   => i_clk,
-    nrst  => w_glob_nrst,
-    cfg   => slv_cfg(CFG_BUS0_XSLV_GPIO),
-    i     => axisi(CFG_BUS0_XSLV_GPIO),
-    o     => axiso(CFG_BUS0_XSLV_GPIO),
-    i_gpio => i_gpio,
-    o_gpio => o_gpio,
-    o_gpio_dir => o_gpio_dir
+    clk   	=> i_clk,
+    nrst  	=> w_glob_nrst,
+    cfg   	=> slv_cfg(CFG_BUS0_XSLV_GPIO),
+    i			=> axisi(CFG_BUS0_XSLV_GPIO),
+    o			=> axiso(CFG_BUS0_XSLV_GPIO),
+    KEY		=> KEY,
+	 SW		=> SW,
+	 LEDG		=> LEDG,
+	 LEDR		=> LEDR,
+	 GPIO_IN	=> GPIO_IN,
+	 GPIO_OUT=> GPIO_OUT
   );
   
   

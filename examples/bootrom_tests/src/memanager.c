@@ -20,28 +20,18 @@
 
 void fw_malloc_init() {
     malloc_type *pool = (malloc_type *)ADDR_BUS0_XSLV_SRAM;
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
-   // 8-bytes alignment
+    // 8-bytes alignment
     pool->allocated_sz = (sizeof(malloc_type) + 7) & ~0x7ull;
     pool->end = (ADDR_BUS0_XSLV_SRAM + pool->allocated_sz);
     pool->data_cnt = 0;
     __sync_synchronize();   // gcc mem barrier to avoi re-ordering
-
-    // RTL Simulation Debug purpose
-    pnp->malloc_addr = pool->end;
-    pnp->malloc_size = pool->allocated_sz;
 }
 
 void *fw_malloc(int size) {
     malloc_type *pool = (malloc_type *)ADDR_BUS0_XSLV_SRAM;
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
     void *ret = (void *)pool->end;
     pool->allocated_sz += (size + 7) & ~0x7ull;
     pool->end = (ADDR_BUS0_XSLV_SRAM + pool->allocated_sz);
-
-    // RTL Simulation Debug purpose
-    pnp->malloc_addr = pool->end;
-    pnp->malloc_size = pool->allocated_sz;
     return ret;  
 }
 

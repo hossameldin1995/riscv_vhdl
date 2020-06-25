@@ -35,21 +35,19 @@ package types_bus0 is
 --! @{
 
 --! @brief Configuration index of the Boot ROM module visible by the firmware.
-constant CFG_BUS0_XSLV_BOOTROM  : integer := 0; 
---! Configuration index of the Firmware ROM Image module.
-constant CFG_BUS0_XSLV_ROMIMAGE : integer := 1;
+constant CFG_BUS0_XSLV_BOOTROM  : integer := 0;
 --! Configuration index of the SRAM module visible by the firmware.
-constant CFG_BUS0_XSLV_SRAM     : integer := 2;
+constant CFG_BUS0_XSLV_SRAM     : integer := 1;
 --! Configuration index of the UART module.
-constant CFG_BUS0_XSLV_UART1    : integer := 3;
+constant CFG_BUS0_XSLV_UART1    : integer := 2;
 --! Configuration index of the GPIO (General Purpose In/Out) module.
-constant CFG_BUS0_XSLV_GPIO     : integer := 4;
+constant CFG_BUS0_XSLV_GPIO     : integer := 3;
 --! Configuration index of the Interrupt Controller module.
-constant CFG_BUS0_XSLV_IRQCTRL  : integer := 5;
+constant CFG_BUS0_XSLV_IRQCTRL  : integer := 4;
 --! Configuration index of the Debug Support Unit module.
-constant CFG_BUS0_XSLV_GPTIMERS : integer := 6;
+constant CFG_BUS0_XSLV_GPTIMERS : integer := 5;
 --! Total number of the slaves devices.
-constant CFG_BUS0_XSLV_TOTAL    : integer := 7;
+constant CFG_BUS0_XSLV_TOTAL    : integer := 6;
 --! @}
 
 --! @defgroup master_id_group AXI4 masters generic IDs.
@@ -60,10 +58,8 @@ constant CFG_BUS0_XSLV_TOTAL    : integer := 7;
 
 --! Cached TileLinkIO bus.
 constant CFG_BUS0_XMST_CPU0     : integer := 0;
---! Uncached TileLinkIO bus.
-constant CFG_BUS0_XMST_CPU1     : integer := 1;
 --! Total Number of master devices on system bus.
-constant CFG_BUS0_XMST_TOTAL    : integer := 2;
+constant CFG_BUS0_XMST_TOTAL    : integer := 1;
 --! @}
 
 

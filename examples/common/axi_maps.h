@@ -24,6 +24,7 @@
 #include "maps/map_gptimers.h"
 #include "maps/map_uart.h"
 #include "maps/map_irqctrl.h"
+#include "maps/i_o_peripheral.h"
 #include "maps/map_rfctrl.h"
 #include "maps/map_gnssengine.h"
 #include "maps/map_ethmac.h"
@@ -54,5 +55,7 @@
 #define CFG_IRQ_GNSS_SS     4
 #define CFG_IRQ_TOTAL       5
 
+// printf_uart enabling
+#define PRINTF_UART_EN
 
 #endif  // __AXI_MAPS_H__

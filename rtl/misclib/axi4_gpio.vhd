@@ -16,6 +16,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 library commonlib;
 use commonlib.types_common.all;
 --! AMBA system bus specific library.
@@ -28,18 +29,20 @@ entity axi4_gpio is
     async_reset : boolean := false;
     xaddr    : integer := 0;
     xmask    : integer := 16#fffff#;
-    xirq     : integer := 0;
-    width    : integer := 12
+    xirq     : integer := 0
   );
   port (
-    clk  : in std_logic;
-    nrst : in std_logic;
-    cfg  : out axi4_slave_config_type;
-    i    : in  axi4_slave_in_type;
-    o    : out axi4_slave_out_type;
-    i_gpio : in std_logic_vector(width-1 downto 0);
-    o_gpio : out std_logic_vector(width-1 downto 0);
-    o_gpio_dir : out std_logic_vector(width-1 downto 0)
+    clk  		: in std_logic;
+    nrst 		: in std_logic;
+    cfg  		: out axi4_slave_config_type;
+    i    		: in  axi4_slave_in_type;
+    o  		  	: out axi4_slave_out_type;
+    KEY			: in std_logic_vector(3 DOWNTO 0);
+	 SW			: in std_logic_vector(9 DOWNTO 0);
+    LEDG			: out std_logic_vector(7 DOWNTO 0);
+    LEDR			: out std_logic_vector(9 DOWNTO 0);
+    GPIO_IN		: in std_logic_vector(17 DOWNTO 0);
+    GPIO_OUT	: out std_logic_vector(17 DOWNTO 0)
   );
 end; 
  
@@ -55,22 +58,6 @@ architecture arch_axi4_gpio of axi4_gpio is
      did => GNSSSENSOR_GPIO
   );
 
-  type registers is record
-    direction : std_logic_vector(31 downto 0);
-    iuser : std_logic_vector(31 downto 0);
-    ouser : std_logic_vector(31 downto 0);
-    reg32_3 : std_logic_vector(31 downto 0);
-    raddr : global_addr_array_type;
-  end record;
-
-  constant R_RESET : registers := (
-      (others => '1'), (others => '0'), 
-      (others => '0'), (others => '0'),
-      ((others => '0'), (others => '0'))
-  );
-
-  signal r, rin : registers;
-
   signal wb_dev_rdata : std_logic_vector(CFG_SYSBUS_DATA_BITS-1 downto 0);
   signal wb_bus_raddr : global_addr_array_type;
   signal w_bus_re    : std_logic;
@@ -79,6 +66,14 @@ architecture arch_axi4_gpio of axi4_gpio is
   signal wb_bus_wstrb : std_logic_vector(CFG_SYSBUS_DATA_BYTES-1 downto 0);
   signal wb_bus_wdata : std_logic_vector(CFG_SYSBUS_DATA_BITS-1 downto 0);
 
+  signal address_w		: STD_LOGIC_VECTOR(31 DOWNTO 0);
+  signal wstrb				: global_addr_array_type;
+  
+  signal register_in		: STD_LOGIC_VECTOR(63 DOWNTO 0);   -- 32 - 0
+  signal register_out	: STD_LOGIC_VECTOR(63 DOWNTO 0);   -- 36 - 0
+  signal OUT_Data_1		: STD_LOGIC;
+  signal OUT_Data_2		: STD_LOGIC;
+	
 begin
 
   axi0 :  axi4_slave generic map (
@@ -100,71 +95,47 @@ begin
     o_wdata => wb_bus_wdata
   );
 
-  comblogic : process(nrst, i_gpio, r, w_bus_re, wb_bus_raddr, wb_bus_waddr,
-                      w_bus_we, wb_bus_wstrb, wb_bus_wdata)
-    variable v : registers;
-    variable vrdata : std_logic_vector(CFG_SYSBUS_DATA_BITS-1 downto 0);
-    variable tmp : std_logic_vector(31 downto 0);
-  begin
-
-    v := r;
-
-    v.raddr := wb_bus_raddr;
-
-    for n in 0 to CFG_WORDS_ON_BUS-1 loop
-      tmp := (others => '0');
-
-      case conv_integer(r.raddr(n)(11 downto 2)) is
-        when 0 => tmp := r.direction;
-        when 1 => tmp := r.iuser;
-        when 2 => tmp := r.ouser;
-        when 3 => tmp := r.reg32_3;
-        when others =>
-      end case;
-      vrdata(8*CFG_ALIGN_BYTES*(n+1)-1 downto 8*CFG_ALIGN_BYTES*n) := tmp;
-    end loop;
-
-
-    if w_bus_we = '1' then
-
-       for n in 0 to CFG_WORDS_ON_BUS-1 loop
-         tmp := wb_bus_wdata(32*(n+1)-1 downto 32*n);
-
-         if conv_integer(wb_bus_wstrb(CFG_ALIGN_BYTES*(n+1)-1 downto CFG_ALIGN_BYTES*n)) /= 0 then
-           case conv_integer(wb_bus_waddr(n)(11 downto 2)) is
-             when 0 => v.direction := tmp;
-             --when 1 => v.iuser := tmp;  -- [RO]
-             when 2 => v.ouser := tmp;
-             when 3 => v.reg32_3 := tmp;
-             when others =>
-           end case;
-         end if;
-       end loop;
-    end if;
-
-    v.iuser(width-1 downto 0) := i_gpio;
-    
-    if not async_reset and nrst = '0' then
-        v := R_RESET;
-    end if;
-  
-    rin <= v;
-    wb_dev_rdata <= vrdata;
-  end process;
-
+  wb_dev_rdata <= "0000000000000000000000000000000" & OUT_Data_2 &"0000000000000000000000000000000" & OUT_Data_1;
   cfg  <= xconfig;
   
-  o_gpio <= r.ouser(width-1 downto 0);
-  o_gpio_dir <= r.direction(width-1 downto 0);
-
+  wstrb(0) <= (others => wb_bus_wstrb(0));
+  wstrb(1) <= (others => wb_bus_wstrb(4));
+  address_w <= ((wb_bus_waddr(0) and wstrb(0)) or (wb_bus_waddr(1) and wstrb(1)));
+  
   -- registers:
   regs : process(clk, nrst)
   begin 
-     if async_reset and nrst = '0' then
-        r <= R_RESET;
+     if not(async_reset) and nrst = '0' then
+        register_in	<= (OTHERS => '0');
+		  register_out	<= (OTHERS => '0');
+		  GPIO_OUT		<= (OTHERS => '0');
+		  LEDR			<= (OTHERS => '0');
+		  LEDG			<= (OTHERS => '0');
+		  OUT_Data_1	<= '0';
+		  OUT_Data_2	<= '0';
      elsif rising_edge(clk) then 
-        r <= rin;
+        if w_bus_we = '1' then   -- write
+				if address_w(8 downto 2) = "1111111" then
+					register_in        <= "00000000000000000000000000000000" & KEY & SW & GPIO_IN;
+					GPIO_OUT           <= register_out(17 downto 0);
+					LEDR               <= register_out(27 downto 18);
+					LEDG               <= register_out(35 downto 28);
+				else
+					register_out(to_integer(unsigned(address_w(7 downto 2)))) <= wb_bus_wdata(0);
+				end if;
+			elsif w_bus_re = '1' then -- read
+				if wb_bus_raddr(0)(8) = '0' then   -- read inputs
+					OUT_Data_1 <= register_in(to_integer(unsigned(wb_bus_raddr(0)(7 downto 2))));
+				else                       -- read outputs
+					OUT_Data_1 <= register_out(to_integer(unsigned(wb_bus_raddr(0)(7 downto 2))));
+				end if;
+				if wb_bus_raddr(1)(8) = '0' then   -- read inputs
+					OUT_Data_2 <= register_in(to_integer(unsigned(wb_bus_raddr(1)(7 downto 2))));
+				else                       -- read outputs
+					OUT_Data_2 <= register_out(to_integer(unsigned(wb_bus_raddr(1)(7 downto 2))));
+				end if;
+		   end if;
      end if; 
-  end process;
-
+  end process;  
+  
 end;

@@ -40,14 +40,10 @@ package types_misc is
 constant CFG_IRQ_UNUSED         : integer := 0;
 --! UART_A interrupt pin.
 constant CFG_IRQ_UART1          : integer := 1;
---! Ethernet MAC interrupt pin.
-constant CFG_IRQ_ETHMAC         : integer := 2;
 --! GP Timers interrupt pin
-constant CFG_IRQ_GPTIMERS       : integer := 3;
---! GNSS Engine IRQ pin that generates 1 msec pulses.
-constant CFG_IRQ_GNSSENGINE     : integer := 4;
+constant CFG_IRQ_GPTIMERS       : integer := 2;
 --! Total number of used interrupts in a system
-constant CFG_IRQ_TOTAL          : integer := 5;
+constant CFG_IRQ_TOTAL          : integer := 3;
 --! @}
 
 --! @brief SOC global reset former.
@@ -142,8 +138,7 @@ component axi4_gpio is
     async_reset : boolean := false;
     xaddr    : integer := 0;
     xmask    : integer := 16#fffff#;
-    xirq     : integer := 0;
-    width    : integer := 12
+    xirq     : integer := 0
   );
   port (
     clk  : in std_logic;
@@ -151,9 +146,12 @@ component axi4_gpio is
     cfg  : out axi4_slave_config_type;
     i    : in  axi4_slave_in_type;
     o    : out axi4_slave_out_type;
-    i_gpio : in std_logic_vector(width-1 downto 0);
-    o_gpio : out std_logic_vector(width-1 downto 0);
-    o_gpio_dir : out std_logic_vector(width-1 downto 0)
+    KEY			: in std_logic_vector(3 DOWNTO 0);
+	  SW			: in std_logic_vector(9 DOWNTO 0);
+    LEDG			: out std_logic_vector(7 DOWNTO 0);
+    LEDR			: out std_logic_vector(9 DOWNTO 0);
+    GPIO_IN		: in std_logic_vector(17 DOWNTO 0);
+    GPIO_OUT	: out std_logic_vector(17 DOWNTO 0)
   );
 end component; 
 

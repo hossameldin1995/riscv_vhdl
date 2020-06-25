@@ -332,6 +332,7 @@ int putchar(int ch) {
 }
 
 void printf_uart(const char *fmt, ... ) {
+    #ifdef PRINTF_UART_EN
     uart_data_type *pdata = fw_get_ram_data(UART1_NAME);
     uart_map *uart = (uart_map *)ADDR_BUS0_XSLV_UART1;
     int id = fw_get_cpuid() + 1;
@@ -356,4 +357,5 @@ void printf_uart(const char *fmt, ... ) {
     }
     // free UART lock
     uart->fwcpuid = 0;
+    #endif
 }

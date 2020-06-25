@@ -50,9 +50,14 @@ void exception_handler_c() {
     print_uart(",mepc:", 6);
     print_uart_hex(get_mepc());
     print_uart("\r\n", 2);
+    struct io_per io_per_d;
+    io_per_d.registers = (volatile void *)ADDR_BUS0_XSLV_GPIO;
 
     /// Exception trap
-    led_set(0xF0);
+    io_per_set_output(&io_per_d, LEDR, 0, LED_ON);
+    io_per_set_output(&io_per_d, LEDR, 1, LED_ON);
+    io_per_set_output(&io_per_d, LEDR, 2, LED_ON);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
     while (1) {}
 }
 

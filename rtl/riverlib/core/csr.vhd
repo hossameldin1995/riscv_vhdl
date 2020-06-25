@@ -23,9 +23,9 @@ use commonlib.types_common.all;
 library riverlib;
 --! RIVER CPU configuration constants.
 use riverlib.river_cfg.all;
-library work;
---! Target dependable configuration: RTL, FPGA or ASIC.
-use work.config_target.all;
+
+library target;
+use target.config_target.all;
 
 entity CsrRegs is 
   generic (

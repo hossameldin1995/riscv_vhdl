@@ -14,7 +14,8 @@ use commonlib.types_common.all;
 library riverlib;
 --! RIVER CPU configuration constants.
 use riverlib.river_cfg.all;
-
+LIBRARY lpm;
+USE lpm.all;
 
 entity IntMulCycloneV is generic (
     async_reset : boolean
@@ -36,14 +37,39 @@ end;
  
 architecture arch_IntMulCycloneV of IntMulCycloneV is
 
+	COMPONENT lpm_mult
+	GENERIC (
+		lpm_hint		: STRING;
+		lpm_representation		: STRING;
+		lpm_type		: STRING;
+		lpm_widtha		: NATURAL;
+		lpm_widthb		: NATURAL;
+		lpm_widthp		: NATURAL
+	);
+	PORT (
+			dataa	: IN STD_LOGIC_VECTOR (63 DOWNTO 0);
+			datab	: IN STD_LOGIC_VECTOR (63 DOWNTO 0);
+			result	: OUT STD_LOGIC_VECTOR (127 DOWNTO 0)
+	);
+	END COMPONENT;
+
 	signal result_s	: std_logic_vector ((RISCV_ARCH*2)-1 DOWNTO 0);
 	
 begin
 
-	mulDSP0 : entity work.mul_int_64 port map (
-      dataa  	=> i_a1,
-      datab 	=> i_a2,
-      result 	=> result_s
+	lpm_mult_component : lpm_mult
+	GENERIC MAP (
+		lpm_hint => "MAXIMIZE_SPEED=1",
+		lpm_representation => "SIGNED",
+		lpm_type => "LPM_MULT",
+		lpm_widtha => 64,
+		lpm_widthb => 64,
+		lpm_widthp => 128
+	)
+	PORT MAP (
+		dataa => i_a1,
+		datab => i_a2,
+		result => result_s
 	);
   
 	-- registers:

@@ -20,22 +20,21 @@
 #include "fw_api.h"
 
 void allocate_exception_table(void);
-void test_fpu(void);
+int test_fpu(void);
 void test_timer(void);
 void test_timer_multicycle_instructions(void);
 void test_missaccess(void);
 void test_stackprotect(void);
-void test_spiflash(uint64_t bar);
-void test_gnss_ss(uint64_t bar);
-void print_pnp(void);
+void start_application(void);
+int wait(int n);
 
 int main() {
-    uint32_t tech;
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
+    io_per io_per_d;
+    int err_cnt;
+    
     uart_map *uart = (uart_map *)ADDR_BUS0_XSLV_UART1;
-    gpio_map *gpio = (gpio_map *)ADDR_BUS0_XSLV_GPIO;
     irqctrl_map *p_irq = (irqctrl_map *)ADDR_BUS0_XSLV_IRQCTRL;
-    uint64_t bar;
+    io_per_d.registers = (volatile void *)ADDR_BUS0_XSLV_GPIO;
 
     if (fw_get_cpuid() != 0) {
         while (1) {}
@@ -45,9 +44,7 @@ int main() {
     // unpredictable behaviour after elf-file reloading via debug port.
     p_irq->irq_mask = 0xFFFFFFFF;
     p_irq->isr_table = 0;
-    pnp->fwid = 0x20190516;
 
-    gpio->direction = 0xf;
     p_irq->irq_lock = 1;
     fw_malloc_init();
     
@@ -56,63 +53,158 @@ int main() {
     uart_isr_init();   // enable printf_uart function and Tx irq=1
     p_irq->irq_lock = 0;
  
-    led_set(0x01);
+    /* LEDG = 1*/
+    io_per_set_output(&io_per_d, LEDG, 0, LED_ON);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
+    printf_uart("*************************************************\n\r");
+    printf_uart("******************** Booting ********************\n\r");
+    printf_uart("*************************************************\n\r");
 
 #if 1
-    printf_uart("HARTID . . . . .%d\r\n", fw_get_cpuid());
-    printf_uart("Tech . . . . . .0x%08x\r\n", pnp->tech);
-    printf_uart("HWID . . . . . .0x%08x\r\n", pnp->hwid);
-    printf_uart("FWID . . . . . .0x%08x\r\n", pnp->fwid);
+    printf_uart("  HARTID . . . . . %d\r\n", fw_get_cpuid());
 
-    led_set(0x02);
+    /* LEDG = 2*/
+    io_per_set_output(&io_per_d, LEDG, 0, LED_OFF);
+    io_per_set_output(&io_per_d, LEDG, 1, LED_ON);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
 
-    test_fpu();
+    err_cnt = test_fpu();
+    if (err_cnt) {
+        io_per_set_output(&io_per_d, LEDR, 0, LED_ON);
+        io_per_set_output(&io_per_d, LEDR, 1, LED_OFF);
+        io_per_set_output(&io_per_d, LEDR, 2, LED_ON);
+        io_per_set_output(&io_per_d, LEDR, 3, LED_OFF);
+        io_per_set_output(&io_per_d, LEDR, 4, LED_ON);
+        io_per_set_output(&io_per_d, LEDR, 5, LED_OFF);
+        io_per_set_output(&io_per_d, LEDR, 6, LED_ON);
+        io_per_set_output(&io_per_d, LEDR, 7, LED_OFF);
+        io_per_set_output(&io_per_d, LEDR, 8, LED_ON);
+        io_per_set_output(&io_per_d, LEDR, 9, LED_OFF);
+        io_per_set_output(&io_per_d, RWD, 0, 0);
+        printf_uart("  This could happend when using -Ofast or -O3 in compilling the project\n\r");
+        printf_uart("  If you want to continue press KEY0\n\r");
+        while(1){
+            io_per_set_output(&io_per_d, RWD, 0, 0);
+            if (io_per_get_input(&io_per_d, KEY, 0)) {
+                io_per_set_output(&io_per_d, LEDR, 0, LED_OFF);
+                io_per_set_output(&io_per_d, LEDR, 2, LED_OFF);
+                io_per_set_output(&io_per_d, LEDR, 4, LED_OFF);
+                io_per_set_output(&io_per_d, LEDR, 6, LED_OFF);
+                io_per_set_output(&io_per_d, LEDR, 8, LED_OFF);
+                break;
+            }
+        }
+    }
 
-    led_set(0x03);
+    /* LEDG = 4*/
+    io_per_set_output(&io_per_d, LEDG, 1, LED_OFF);
+    io_per_set_output(&io_per_d, LEDG, 2, LED_ON);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
     test_timer();      // Enabling timer[0] with 1 sec interrupts
 #else
     test_timer_multicycle_instructions();
 #endif
 
-    led_set(0x04);
-    test_missaccess();
+    /* LEDG = 8*/
+    io_per_set_output(&io_per_d, LEDG, 2, LED_OFF);
+    io_per_set_output(&io_per_d, LEDG, 3, LED_ON);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
 
-    led_set(0x05);
-    test_stackprotect();
+    printf_uart("  Done testing\n\r");
 
-    bar = get_dev_bar(VENDOR_GNSSSENSOR, GNSS_SUB_SYSTEM);
-    led_set(0x06);
-    if (bar != DEV_NONE) {
-        led_set(0x07);
-        test_gnss_ss(bar);
-        printf_uart("GNSS_SS BAR. . .0x%08x\r\n", bar);
-    }
-    led_set(0x08);
 
-    bar = get_dev_bar(VENDOR_GNSSSENSOR, GNSSSENSOR_SPI_FLASH);
-    led_set(0x09);
-    if (bar != DEV_NONE) {
-        led_set(0x0A);
-        printf_uart("SPI Flash BAR. .0x%08x\r\n", bar);
-        test_spiflash(bar);
-    }
-    led_set(0x0B);
+    printf_uart("*************************************************\n\r");
+    printf_uart("*************** Start Appilcation ***************\n\r");
+    printf_uart("*************************************************\n\r");
 
-    led_set(0x55);
-    print_pnp();
 
-    led_set(0x1F);
+    /* LEDG = 0*/
+    io_per_set_output(&io_per_d, LEDG, 3, LED_OFF);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
 
-    // TODO: implement test console
-    while (1) {}
-
-    // NEVER REACH THIS POINT
-
-    // jump to entry point in SRAM = 0x10000000
-    //     'meps' - Machine Exception Program Coutner
-    __asm__("lui t0, 0x10000");
-    __asm__("csrw mepc, t0");
-    __asm__("mret");
+    start_application(); // no return
 
     return 0;
+}
+
+int wait(volatile int n) {
+    volatile int i = 0;
+    while(i<n){i++;};
+    return i;
+}
+
+void start_application(void) {
+    volatile int i;
+    int is_found;
+    int index = 0;
+    int gpio_values;
+    int mul;
+    int div;
+    double double_v;
+    double d_v;
+    io_per io_per_d;
+
+    io_per_d.registers = (volatile void *)ADDR_BUS0_XSLV_GPIO;
+
+    printf_uart("Hellow World - %d!!!!\n\r", 1);
+
+    while(1) {
+        io_per_set_output(&io_per_d, RWD, 0, 0);
+        i = wait(900000);
+
+        printf_uart("Wait : %d\n\r", i);
+        printf_uart("Index: %d\n\r", index);
+
+
+        gpio_values =  io_per_get_input(&io_per_d, SW, 1)+
+                    io_per_get_input(&io_per_d, SW, 2)+
+                    io_per_get_input(&io_per_d, SW, 3)+
+                    io_per_get_input(&io_per_d, SW, 4)+
+                    io_per_get_input(&io_per_d, SW, 5)+
+                    io_per_get_input(&io_per_d, SW, 6)+
+                    io_per_get_input(&io_per_d, SW, 7)+
+                    io_per_get_input(&io_per_d, SW, 8)+
+                    io_per_get_input(&io_per_d, SW, 9);
+                    
+        mul = gpio_values * 3; 
+        div = gpio_values / 3;
+        double_v = (double)gpio_values / 3.0;
+
+        printf_uart("gpio_values: %d\n\r", gpio_values);
+        printf_uart("mul_i      : %d\r\n", mul);
+        printf_uart("div_i      : %d\r\n", div);
+
+        is_found = 0;
+        d_v = 0.0;
+        for(i = 0; i < 10; i++) {
+            if (double_v < d_v) {
+                is_found = 1;
+                printf_uart("double_v < 0.%d\n\r", i);
+                break;
+            }
+            d_v += 0.1;
+        }
+
+        if (!is_found) {
+            d_v = 1.0;
+            for(i = 0; i < 10; i++) {
+                if (double_v < d_v) {
+                    is_found = 1;
+                    printf_uart("double_v < 1.%d\n\r", i);
+                    break;
+                }
+                d_v += 0.1;
+            }
+        }
+        
+        if (!is_found) {
+            printf_uart("double_v > 1.9\n\r");
+        }
+
+        while (io_per_get_input(&io_per_d, SW, 0) == 1){ // Halt the system
+           io_per_set_output(&io_per_d, RWD, 0, 0);
+        }
+
+        index++;
+    }
 }

@@ -18,23 +18,12 @@
 #include "axi_maps.h"
 #include "encoding.h"
 
-static const int FW_IMAGE_SIZE_BYTES = 1 << 17;
+static const int FW_IMAGE_SIZE_BYTES = 1 << 16;
 
 int fw_get_cpuid() {
     int ret;
     asm("csrr %0, mhartid" : "=r" (ret));
     return ret;
-}
-
-void led_set(int output) {
-    // [3:0] DIP pins
-    ((gpio_map *)ADDR_BUS0_XSLV_GPIO)->ouser = (output << 4);
-}
-
-int get_dip(int idx) {
-    // [3:0] DIP pins
-    int dip = ((gpio_map *)ADDR_BUS0_XSLV_GPIO)->iuser >> idx;
-    return dip & 1;
 }
 
 void print_uart(const char *buf, int sz) {
@@ -62,32 +51,10 @@ void print_uart_hex(long val) {
 }
 
 void copy_image() { 
-    uint32_t tech;
     uint64_t *fwrom = (uint64_t *)ADDR_BUS0_XSLV_FWIMAGE;
-    uint64_t *flash = (uint64_t *)ADDR_BUS0_XSLV_EXTFLASH;
     uint64_t *sram = (uint64_t *)ADDR_BUS0_XSLV_SRAM;
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
 
-    /** 
-     * Speed-up RTL simulation by skipping coping stage.
-     * Or skip this stage to avoid rewritting of externally loaded image.
-     */
-    tech = pnp->tech & 0xFF;
-
-    if (tech != TECH_INFERRED && pnp->fwid == 0) {
-        /*if (get_dip(0) == 1) {
-            print_uart("Coping FLASH\r\n", 14);
-            memcpy(sram, flash, FW_IMAGE_SIZE_BYTES);
-        } else {
-            print_uart("Coping FWIMAGE\r\n", 16);
-            memcpy(sram, fwrom, FW_IMAGE_SIZE_BYTES);
-        }*/
-        print_uart("Coping FWIMAGE\r\n", 16);
-        memcpy(sram, fwrom, FW_IMAGE_SIZE_BYTES);
-
-    }
-    // Write Firmware ID to avoid copy image after soft-reset.
-    pnp->fwid = 0x20191025;
+    memcpy(sram, fwrom, FW_IMAGE_SIZE_BYTES);
 
 #if 0
     /** Just to check access to DSU and read MCPUID via this slave device.
@@ -123,11 +90,11 @@ void timestamp_output() {
 }
 
 void _init() {
-    uint32_t tech;
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
     uart_map *uart = (uart_map *)ADDR_BUS0_XSLV_UART1;
-    gpio_map *gpio = (gpio_map *)ADDR_BUS0_XSLV_GPIO;
     irqctrl_map *p_irq = (irqctrl_map *)ADDR_BUS0_XSLV_IRQCTRL;
+    io_per io_per_d;
+    
+    io_per_d.registers = (volatile void *)ADDR_BUS0_XSLV_GPIO;
   
     if (fw_get_cpuid() != 0) {
         // TODO: waiting event or something
@@ -136,7 +103,6 @@ void _init() {
             uint64_t *sram = (uint64_t *)ADDR_BUS0_XSLV_SRAM;
             uint64_t tdata = sram[16*1024];
             sram[16*1024] = tdata;
-            tech = pnp->tech;
         }
     }
 
@@ -145,26 +111,29 @@ void _init() {
     p_irq->irq_mask = 0xFFFFFFFF;
 
     // Half period of the uart = Fbus / 115200 / 2 = 70 MHz / 115200 / 2:
-    uart->scaler = SYS_HZ / 115200 / 2;  // 40 MHz
-
-    gpio->direction = 0xF;  // [3:0] input DIP; [11:4] output LEDs
-
-    led_set(0x01);
-    print_uart("Boot . . .", 10);
-    led_set(0x02);
+    uart->scaler = SYS_HZ / 115200 / 2;
+    
+    io_per_set_output(&io_per_d, LEDG, 0, LED_ON); // LED = 1
+    io_per_set_output(&io_per_d, RWD, 0, 0);
+    //print_uart("Booting . . .\n\r", 15);
+    
+    io_per_set_output(&io_per_d, LEDG, 1, LED_ON); // LEDG = 2
+    io_per_set_output(&io_per_d, LEDG, 0, LED_OFF);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
 
     copy_image();
-    led_set(0x03);
-    print_uart("OK\r\n", 4);
+    
+    io_per_set_output(&io_per_d, LEDG, 2, LED_ON); // LEDG = 4
+    io_per_set_output(&io_per_d, LEDG, 1, LED_OFF);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
+    //print_uart("Application image copied to RAM\r\n", 33);
 
-    /** Check ADC detector that RF front-end is connected: */
-    tech = (pnp->tech >> 24) & 0xff;
-    if (tech != 0xFF) {
-        print_uart("ADC clock not found. Enable DIP int_rf.\r\n", 41);
-        tech = (pnp->tech >> 24) & 0xff;
-        led_set(tech);
-    }
-    led_set(0x04);
+    io_per_set_output(&io_per_d, LEDR, 9, LED_ON); // LEDR = 0x200
+    io_per_set_output(&io_per_d, LEDG, 2, LED_OFF);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
+    //print_uart("Jump to Application in RAM\r\n", 28);
+
+    
 }
 
 /** Not used actually */
