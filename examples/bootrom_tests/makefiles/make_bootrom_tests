@@ -14,7 +14,7 @@ else
   CFLAGS += -march=rv64imac -mabi=lp64
 endif
 ifeq ($(Cyclone_V), 1)
-  CFLAGS += -DSYS_HZ=65000000
+  CFLAGS += -DSYS_HZ=70000000
 else
   CFLAGS += -DSYS_HZ=40000000
 endif

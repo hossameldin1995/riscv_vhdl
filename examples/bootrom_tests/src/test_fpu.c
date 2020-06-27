@@ -18,6 +18,8 @@
 #include "fw_api.h"
 #include "test_fpu.h"
 
+int wait(int n);
+
 int test_fpu(void) { 
     Reg64Type a, b, res;
     int64_t ix3;
@@ -40,6 +42,8 @@ int test_fpu(void) {
         if (res.val != FADD_TESTS[i].res) {
             err_cnt++;
             printf_uart("  FADD[%d] fail\r\n", i);
+            printf_uart("    Expected result : %x\r\n", FADD_TESTS[i].res);
+            printf_uart("    Observeed result: %x\r\n", res.val);
         }
     }
 #endif
@@ -54,6 +58,8 @@ int test_fpu(void) {
         if (res.val != FSUB_TESTS[i].res) {
             err_cnt++;
             printf_uart("  FSUB[%d] fail\r\n", i);
+            printf_uart("    Expected result : %x\r\n", FSUB_TESTS[i].res);
+            printf_uart("    Observeed result: %x\r\n", res.val);
         }
     }
 #endif
@@ -68,6 +74,8 @@ int test_fpu(void) {
         if (res.val != FDIV_TESTS[i].res) {
             err_cnt++;
             printf_uart("  FDIV[%d] fail\r\n", i);
+            printf_uart("    Expected result : %x\r\n", FDIV_TESTS[i].res);
+            printf_uart("    Observeed result: %x\r\n", res.val);
         }
     }
 #endif
@@ -82,6 +90,8 @@ int test_fpu(void) {
         if (res.val != FMUL_TESTS[i].res) {
             err_cnt++;
             printf_uart("  FMUL[%d] fail\r\n", i);
+            printf_uart("    Expected result : %x\r\n", FMUL_TESTS[i].res);
+            printf_uart("    Observeed result: %x\r\n", res.val);
         }
     }
 #endif
@@ -97,6 +107,8 @@ int test_fpu(void) {
         if (res.val != FMAX_TESTS[i].res) {
             err_cnt++;
             printf_uart("  FMAX[%d] fail\r\n", i);
+            printf_uart("    Expected result : %x\r\n", FMAX_TESTS[i].res);
+            printf_uart("    Observeed result: %x\r\n", res.val);
         }
     }
 #endif
@@ -111,6 +123,8 @@ int test_fpu(void) {
         if (res.val != FCVT_D_W_TESTS[i].res) {
             err_cnt++;
             printf_uart("  DCVT_D_W[%d] fail\r\n", i);
+            printf_uart("    Expected result : %x\r\n", FCVT_D_W_TESTS[i].res);
+            printf_uart("    Observeed result: %x\r\n", res.val);
         }
     }
 #endif
@@ -125,6 +139,8 @@ int test_fpu(void) {
         if (res.val != FCVT_D_WU_TESTS[i].res) {
             err_cnt++;
             printf_uart("  DCVT_D_WU[%d] fail\r\n", i);
+            printf_uart("    Expected result : %x\r\n", FCVT_D_WU_TESTS[i].res);
+            printf_uart("    Observeed result: %x\r\n", res.val);
         }
     }
 #endif
@@ -139,6 +155,8 @@ int test_fpu(void) {
         if (res.val != FCVT_W_D_TESTS[i].res) {
             err_cnt++;
             printf_uart("  DCVT_W_D[%d] fail\r\n", i);
+            printf_uart("    Expected result : %x\r\n", FCVT_W_D_TESTS[i].res);
+            printf_uart("    Observeed result: %x\r\n", res.val);
         }
     }
 #endif
@@ -153,6 +171,8 @@ int test_fpu(void) {
         if (res.val != FCVT_WU_D_TESTS[i].res) {
             err_cnt++;
             printf_uart("  DCVT_WU_D[%d] fail\r\n", i);
+            printf_uart("    Expected result : %x\r\n", FCVT_WU_D_TESTS[i].res);
+            printf_uart("    Observeed result: %x\r\n", res.val);
         }
     }
 #endif
@@ -262,6 +282,8 @@ int test_fpu(void) {
         err_cnt++;
         printf_uart("  FCMP %d fail\r\n", 5);
     }
+
+    volatile int i = wait(500000);
 
     printf_uart("  FPU tests  . . . %d\r\n", test_cnt);
     printf_uart("  FPU errors . . . %d\r\n", err_cnt);

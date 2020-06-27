@@ -107,7 +107,7 @@ architecture arch_DoubleAdd of DoubleAdd is
 	signal res_le      : std_logic_vector(0 downto 0);
 	signal res_max     : std_logic_vector(63 downto 0);
 	
-	signal counter_st  : std_logic_vector(2 downto 0);
+	signal counter_st  : std_logic_vector(3 downto 0);
 	
 	signal en_stage    : std_logic;
 	signal en_add_sub  : std_logic;
@@ -119,13 +119,11 @@ architecture arch_DoubleAdd of DoubleAdd is
 	signal opSel       : std_logic_vector(0 downto 0);
 	
 	signal s_o_illegal_op : std_logic;
-	signal s_o_valid      : std_logic;
 	
 begin
 
 	reset   <= not(i_nrst);
 	o_res   <= s_o_res;
-	o_valid <= s_o_valid;
 
 	en_add_sub <= (en_stage and (i_add or i_sub)) or (i_ena and (i_add or i_sub));
 	en_eq      <= (en_stage and i_eq) or (i_ena and i_eq);
@@ -136,11 +134,11 @@ begin
 	opSel(0) <= i_add and not(i_sub);
     
 	o_overflow   <= '1' when s_o_res(63 downto 52) = X"7FF" else -- Not sure of this
-                    '0';
+                   '0';
 	s_o_illegal_op <= '1' when (i_a(62 downto 52) = "11111111111") or (i_b(62 downto 52) = "11111111111") else
-                    '0';
+                     '0';
 
-	FP_ADD_SUB_COPM_64 : FP_ADD_SUB_64 
+	FP_ADD_SUB_COMP_64 : FP_ADD_SUB_64 
 	port map(
 		clk    => i_clk,
 		areset => reset,
@@ -150,7 +148,7 @@ begin
 		opSel  => opSel
     );
         
-   FP_EQ_COPM_64 : FP_EQ_64 
+   FP_EQ_COMP_64 : FP_EQ_64 
 	port map(
 		clk    => i_clk,
 		areset => reset,
@@ -159,7 +157,7 @@ begin
 		q      => res_eq
     );
     
-   FP_LT_COPM_64 : FP_LT_64 
+   FP_LT_COMP_64 : FP_LT_64 
 	port map(
 		clk    => i_clk,
 		areset => reset,
@@ -168,7 +166,7 @@ begin
 		q      => res_lt
     );
     
-   FP_LE_COPM_64 : FP_LE_64 
+   FP_LE_COMP_64 : FP_LE_64 
 	port map(
 		clk    => i_clk,
 		areset => reset,
@@ -177,7 +175,7 @@ begin
 		q      => res_le
     );
     
-   FP_MAX_COPM_64 : FP_MAX_64 
+   FP_MAX_COMM_64 : FP_MAX_64 
 	port map(
 		clk    => i_clk,
 		areset => reset,
@@ -186,15 +184,16 @@ begin
 		q      => res_max
 	);
 	
-	process(reset, i_clk)
+	process(i_nrst, i_clk)
 	begin
-		if reset = '1' then
-			s_o_res      <= (others => '0');
-			s_o_valid    <= '0';
-			o_busy       <= '0';
+		if i_nrst = '0' then
+			s_o_res        <= (others => '0');
+			o_valid        <= '0';
+			o_busy         <= '0';
+			o_illegal_op   <= '0';
 			
-			counter_st  <= (others => '0');
-			en_stage      <= '0';
+			counter_st     <= (others => '0');
+			en_stage       <= '0';
 		elsif rising_edge(i_clk) then
 			if i_ena = '1' then
 				counter_st <= (others => '0');
@@ -205,26 +204,31 @@ begin
 			end if;
 			
 			if en_stage = '1' then
-				counter_st <= counter_st + "001";
-				if counter_st = "000" then
+				counter_st <= counter_st + "0001";
+				if counter_st = "0000" then
 					if en_eq = '1' then
-						s_o_valid <= '1';
+						o_valid <= '1';
+						o_illegal_op <= s_o_illegal_op;
 						o_busy <= '0';
 						s_o_res <= X"000000000000000"&"000"&res_eq(0);
 					elsif en_lt = '1' then
-						s_o_valid <= '1';
+						o_valid <= '1';
+						o_illegal_op <= s_o_illegal_op;
 						o_busy <= '0';
 						s_o_res <= X"000000000000000"&"000"&res_lt(0);
 					elsif en_le = '1' then
-						s_o_valid <= '1';
+						o_valid <= '1';
+						o_illegal_op <= s_o_illegal_op;
 						o_busy <= '0';
 						s_o_res <= X"000000000000000"&"000"&res_le(0);
 					elsif en_max_min = '1' and i_max = '1' then
-						s_o_valid <= '1';
+						o_valid <= '1';
+						o_illegal_op <= s_o_illegal_op;
 						o_busy <= '0';
 						s_o_res <= res_max;
 					elsif en_max_min = '1' and i_min = '1' then
-						s_o_valid <= '1';
+						o_valid <= '1';
+						o_illegal_op <= s_o_illegal_op;
 						o_busy <= '0';
 						if res_max = i_a then
 							s_o_res <= i_b;
@@ -232,28 +236,20 @@ begin
 							s_o_res <= i_a;
 						end if;
 					end if;
-				elsif counter_st = "001" and (en_eq or en_lt or en_le or en_max_min) = '1' then
+				elsif counter_st = "0001" and (en_eq or en_lt or en_le or en_max_min) = '1' then
 					en_stage <= '0';
-					s_o_valid <= '0';
-				elsif counter_st = "110" and en_add_sub = '1' then
+					o_valid <= '0';
+				elsif counter_st = "1000" and en_add_sub = '1' then
 					s_o_res <= res_add_sub;
-					s_o_valid <= '1';
+					o_valid <= '1';
+					o_illegal_op <= s_o_illegal_op;
 					o_busy <= '0';
-				elsif counter_st = "111" and en_add_sub = '1' then
+				elsif counter_st = "1001" and en_add_sub = '1' then
 					en_stage <= '0';
-					s_o_valid <= '0';
+					o_valid <= '0';
 				end if;
 			end if;
 		end if;
-    end process;
-    
-    process(reset, s_o_valid)
-    begin
-        if reset = '1' then
-            o_illegal_op <= '0';
-        elsif rising_edge(s_o_valid) then
-            o_illegal_op <= s_o_illegal_op;
-        end if;
     end process;
 
 end;

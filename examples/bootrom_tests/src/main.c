@@ -30,7 +30,7 @@ int wait(int n);
 
 int main() {
     io_per io_per_d;
-    int err_cnt;
+    int err_cnt = 0;
     
     uart_map *uart = (uart_map *)ADDR_BUS0_XSLV_UART1;
     irqctrl_map *p_irq = (irqctrl_map *)ADDR_BUS0_XSLV_IRQCTRL;
@@ -68,7 +68,7 @@ int main() {
     io_per_set_output(&io_per_d, LEDG, 1, LED_ON);
     io_per_set_output(&io_per_d, RWD, 0, 0);
 
-    err_cnt = test_fpu();
+    //err_cnt = test_fpu();
     if (err_cnt) {
         io_per_set_output(&io_per_d, LEDR, 0, LED_ON);
         io_per_set_output(&io_per_d, LEDR, 1, LED_OFF);

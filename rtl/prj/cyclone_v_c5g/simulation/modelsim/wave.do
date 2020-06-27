@@ -53,29 +53,27 @@ update
 WaveRestoreZoom {0 ps} {1597184 ps}
 
 
-add wave -position insertpoint  \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_nrst \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_clk \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_ena \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_add \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_sub \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_eq \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_lt \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_le \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_max \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_min \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_a \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_b \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_res \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_illegal_op \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_overflow \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_valid \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_busy
-
 ###################################################################
 ############################# FPU ADD #############################
 ###################################################################
 #add wave -position insertpoint  \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_nrst \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_clk \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_ena \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_add \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_sub \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_eq \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_lt \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_le \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_max \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_min \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_a \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/i_b \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_res \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_illegal_op \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_overflow \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_valid \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_busy \
 #sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/reset \
 #sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/s_o_res \
 #sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/res_add_sub \
@@ -95,6 +93,26 @@ sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/o_busy
 #sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fadd_d0/s_o_valid
 
 
+###################################################################
+############################# FPU MUL #############################
+###################################################################
+add wave -position insertpoint  \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/async_reset \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_nrst \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_clk \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_ena \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_a \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_b \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_res \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_illegal_op \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_overflow \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_valid \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_busy \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_res \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/counter_st \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/reset \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_illegal_op \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_busy
 
 
 
