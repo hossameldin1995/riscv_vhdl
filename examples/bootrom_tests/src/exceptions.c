@@ -40,38 +40,32 @@ int get_mbadaddr() {
 }
 
 void exception_instr_load_fault_c() {
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
-    uint64_t t1 = pnp->fwdbg1;
-    asm("csrw mepc, %0" : :"r"(t1));
-    pnp->fwdbg1 = get_mbadaddr();
+    uint64_t mbadaddr = get_mbadaddr();
+     printf_uart("Exception >> instr load fault (mbadaddr : %x)", mbadaddr);
 }
 
 void exception_load_fault_c() {
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
-    pnp->fwdbg1 = get_mbadaddr();
+    uint64_t mbadaddr = get_mbadaddr();
+    printf_uart("Exception >> load fault (mbadaddr : %x)", mbadaddr);
 }
 
 void exception_store_fault_c() {
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
-    pnp->fwdbg1 = get_mbadaddr();
+    uint64_t mbadaddr = get_mbadaddr();
+    printf_uart("Exception >> store fault (mbadaddr : %x)", mbadaddr);
 }
 
 void exception_stack_overflow_c() {
-    // CSR_mstackovr = 0x350 - non-standard CSR
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
     uint64_t sp;
     // Save current stack pointer into debug regsiter
     asm("mv %0, sp" : "=r" (sp));
-    pnp->fwdbg2 = sp;
+    printf_uart("Exception >> stac overflow (sp : %x)", sp);
 }
 
 void exception_stack_underflow_c() {
-    // CSR_mstackund = 0x351 - non-standard CSR
-    pnp_map *pnp = (pnp_map *)ADDR_BUS0_XSLV_PNP;
     uint64_t sp;
     // Save current stack pointer into debug regsiter
     asm("mv %0, sp" : "=r" (sp));
-    pnp->fwdbg2 = sp;
+    printf_uart("Exception >> stac underflow (sp : %x)", sp);
 }
 
 void exception_handler_c() {

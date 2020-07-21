@@ -14,6 +14,17 @@
 --! limitations under the License.
 --!
 
+-- 0x00000000		64 KB		Boot ROM
+-- 0x10000000		256KB		RAM
+-- 0x80000000		4  KB		GPIO
+-- 0x80001000		4  KB		UART1
+-- 0x80002000		4  KB		IRQ Controller
+-- 0x80003000		4  KB		GP Timers				Two general purpose timers with RTC
+-- 0x80004000		4	KB		Time Measurement
+-- 0x80005000		4  KB		TON0
+-- 0x80006000		4  KB		PWM0
+-- 0x80007000		4  KB		PID0
+
 --! Standard library
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -49,8 +60,9 @@ use target.config_target.all;
 --!          are available on FPGA/ASIC IO pins.
 entity riscv_soc is port 
 ( 
-  i_rst : in std_logic;
-  i_clk  : in std_logic;
+  i_rst     : in std_logic;
+  i_clk     : in std_logic;
+  i_clk_pwm : in std_logic;
   --! UART1 signals:
   i_uart1_ctsn : in std_logic;
   i_uart1_rd   : in std_logic;
@@ -252,10 +264,10 @@ begin
 
   --! @brief Timers with the AXI4 interface.
   --! @details Map address:
-  --!          0x80005000..0x80005fff (4 KB total)
+  --!          0x80003000..0x80003fff (4 KB total)
   gptmr0 : axi4_gptimers  generic map (
     async_reset => CFG_ASYNC_RESET,
-    xaddr     => 16#80005#,
+    xaddr     => 16#80003#,
     xmask     => 16#fffff#,
     xirq      => CFG_IRQ_GPTIMERS,
     tmr_total => 2
@@ -266,6 +278,50 @@ begin
     i_axi  => axisi(CFG_BUS0_XSLV_GPTIMERS),
     o_axi  => axiso(CFG_BUS0_XSLV_GPTIMERS),
     o_irq  => irq_pins(CFG_IRQ_GPTIMERS)
+  );
+  
+  time_measurement : axi4_time_measurement generic map (
+    async_reset => CFG_ASYNC_RESET,
+    xaddr    => 16#80004#,
+    xmask    => 16#fffff#,
+    xirq     => 0
+  ) port map (
+    clk   	=> i_clk,
+    nrst  	=> w_glob_nrst,
+    cfg   	=> slv_cfg(CFG_BUS0_XSLV_TIME_MEASUREMENT),
+    i			=> axisi(CFG_BUS0_XSLV_TIME_MEASUREMENT),
+    o			=> axiso(CFG_BUS0_XSLV_TIME_MEASUREMENT),
+	 HEX0			=> HEX0,
+	 HEX1			=> HEX1,
+	 HEX2			=> HEX2,
+	 HEX3			=> HEX3
+  );
+  
+  TON0 : axi4_ton generic map (
+    async_reset => CFG_ASYNC_RESET,
+    xaddr    => 16#80005#,
+    xmask    => 16#fffff#,
+    xirq     => 0
+  ) port map (
+    clk   	=> i_clk,
+    nrst  	=> w_glob_nrst,
+    cfg   	=> slv_cfg(CFG_BUS0_XSLV_TON0),
+    i			=> axisi(CFG_BUS0_XSLV_TON0),
+    o			=> axiso(CFG_BUS0_XSLV_TON0)
+  );
+  
+  PWM0 : axi4_pwm generic map (
+    async_reset => CFG_ASYNC_RESET,
+    xaddr    => 16#80006#,
+    xmask    => 16#fffff#,
+    xirq     => 0
+  ) port map (
+    clk   	=> i_clk,
+    clk_pwm 	=> i_clk_pwm,
+    nrst  	=> w_glob_nrst,
+    cfg   	=> slv_cfg(CFG_BUS0_XSLV_PWM0),
+    i			=> axisi(CFG_BUS0_XSLV_PWM0),
+    o			=> axiso(CFG_BUS0_XSLV_PWM0)
   );
 
 

@@ -696,6 +696,12 @@ begin
                         wb_dec(Instr_FMUL_D) := '1';
                     when "0001101" =>
                         wb_dec(Instr_FDIV_D) := '1';
+                    when "0010001" =>
+                        if wb_opcode2 = "000" then
+                            wb_dec(Instr_FSGNJ_D) := '1';
+                        else
+                            w_error := '1';
+                        end if;
                     when "0010101" =>
                         if wb_opcode2 = "000" then
                             wb_dec(Instr_FMIN_D) := '1';
@@ -814,7 +820,7 @@ begin
             or wb_dec(Instr_FCVT_D_W) or wb_dec(Instr_FCVT_D_WU)
             or wb_dec(Instr_FCVT_D_L) or wb_dec(Instr_FCVT_D_LU)
             or wb_dec(Instr_FMOV_D_X) or wb_dec(Instr_FLD)
-            or wb_dec(Instr_FSD);
+            or wb_dec(Instr_FSD) or wb_dec(Instr_FSGNJ_D);
         
         v.instr_unimplemented := w_error;
     elsif i_any_hold = '0' then

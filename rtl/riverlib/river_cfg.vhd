@@ -266,9 +266,10 @@ package river_cfg is
   constant Instr_FMUL_D : integer := 91;
   constant Instr_FSD : integer := 92;
   constant Instr_FSUB_D : integer := 93;
-  constant Instr_Total : integer := 94;
+  constant Instr_FSGNJ_D : integer := 94;
+  constant Instr_Total : integer := 95;
 
-  constant Instr_FPU_Total : integer := Instr_FSUB_D - Instr_FADD_D + 1;
+  constant Instr_FPU_Total : integer := Instr_FSGNJ_D - Instr_FADD_D + 1;
   --! @}
 
   --! @name PRV bits possible values:

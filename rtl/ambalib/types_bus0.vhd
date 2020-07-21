@@ -46,8 +46,12 @@ constant CFG_BUS0_XSLV_GPIO     : integer := 3;
 constant CFG_BUS0_XSLV_IRQCTRL  : integer := 4;
 --! Configuration index of the Debug Support Unit module.
 constant CFG_BUS0_XSLV_GPTIMERS : integer := 5;
+--! Configuration index of the Perepherals.
+constant CFG_BUS0_XSLV_TIME_MEASUREMENT : integer := 6;
+constant CFG_BUS0_XSLV_TON0             : integer := 7;
+constant CFG_BUS0_XSLV_PWM0             : integer := 8;
 --! Total number of the slaves devices.
-constant CFG_BUS0_XSLV_TOTAL    : integer := 6;
+constant CFG_BUS0_XSLV_TOTAL    : integer := 9;
 --! @}
 
 --! @defgroup master_id_group AXI4 masters generic IDs.

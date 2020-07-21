@@ -18,19 +18,17 @@
 #include "axi_maps.h"
 #include "encoding.h"
 #include "fw_api.h"
+#include "test_arithmetic.h"
 
 void allocate_exception_table(void);
-int test_fpu(void);
+uint32_t test_fpu(void);
 void test_timer(void);
-void test_timer_multicycle_instructions(void);
-void test_missaccess(void);
-void test_stackprotect(void);
 void start_application(void);
-int wait(int n);
+uint64_t double2hex(double x);
 
-int main() {
+uint32_t main() {
     io_per io_per_d;
-    int err_cnt = 0;
+    uint32_t err_cnt = 0;
     
     uart_map *uart = (uart_map *)ADDR_BUS0_XSLV_UART1;
     irqctrl_map *p_irq = (irqctrl_map *)ADDR_BUS0_XSLV_IRQCTRL;
@@ -60,7 +58,6 @@ int main() {
     printf_uart("******************** Booting ********************\n\r");
     printf_uart("*************************************************\n\r");
 
-#if 1
     printf_uart("  HARTID . . . . . %d\r\n", fw_get_cpuid());
 
     /* LEDG = 2*/
@@ -101,9 +98,6 @@ int main() {
     io_per_set_output(&io_per_d, LEDG, 2, LED_ON);
     io_per_set_output(&io_per_d, RWD, 0, 0);
     test_timer();      // Enabling timer[0] with 1 sec interrupts
-#else
-    test_timer_multicycle_instructions();
-#endif
 
     /* LEDG = 8*/
     io_per_set_output(&io_per_d, LEDG, 2, LED_OFF);
@@ -127,36 +121,127 @@ int main() {
     return 0;
 }
 
-int wait(volatile int n) {
-    volatile int i = 0;
-    while(i<n){i++;};
-    return i;
+uint64_t double2hex(double x) {
+    uint64_t *p;
+    p = (void*)&x;
+    return *p;
+
 }
 
+uint32_t check_arithmetic(uint32_t gpio_value, 
+                          uint32_t int_mul,  uint32_t int_div, 
+                          double double_mul, double double_div) {
+    uint32_t error_arithmetic = 0;
+
+
+    if ((int_mul - test_int_mul[gpio_value]) > 0.0000000000001) {
+        error_arithmetic++;
+        printf_uart("%d int_mul\n\r", gpio_value);
+    }
+    if ((int_div - test_int_div[gpio_value]) > 0.0000000000001) {
+        error_arithmetic++;
+        printf_uart("%d int_div\n\r", gpio_value);
+    }
+    if ((double_mul - test_double_mul[gpio_value]) > 0.0000000000001) {
+        error_arithmetic++;
+        printf_uart("%d double_mul\n\r", gpio_value);
+        print_uart_hex(double2hex(double_mul));
+        print_uart("\n\r", 2);
+    }
+    if ((double_div - test_double_div[gpio_value]) > 0.0000000000001) {
+        error_arithmetic++;
+        printf_uart("%d double_div\n\r", gpio_value);
+        print_uart_hex(double2hex(double_div));
+        print_uart("\n\r", 2);
+    }
+    
+
+    return error_arithmetic;
+}
+
+// ***************************************
+// ******* LED CODE **********************
+// ***************************************
+// LEDG 0      >> Application init done
+//      1      >> Application init done
+//      2      >>
+//      3      >>
+//      4      >>
+//      5      >>
+//      6      >>
+//      7      >>
+//
+// LEDR 0      >> TON0 E_T
+//      1      >> TON0 Q
+//      2      >> PWM0 Q
+//      3      >> 
+//      4      >> 
+//      5      >> 
+//      6      >> 
+//      7      >> 
+//      8      >> 
+//      9      >> Error Arithmetic
+
 void start_application(void) {
-    volatile int i;
-    int is_found;
-    int index = 0;
-    int gpio_values;
-    int mul;
-    int div;
-    double double_v;
-    double d_v;
+    uint32_t int_mul;
+    uint32_t int_div;
+    uint32_t error_arithmetic = 0;
+    uint32_t is_first_time = 1;
+    uint32_t gpio_value;
+    double double_mul;
+    double double_div;
+
+    time_measurement time_measurement_d;
     io_per io_per_d;
+    timer_hw TON0;
+    pwm_hw PWM0;
 
+    time_measurement_d.registers = (volatile void *)ADDR_BUS0_XSLV_MEASUREMENT;
     io_per_d.registers = (volatile void *)ADDR_BUS0_XSLV_GPIO;
+    TON0.registers = (volatile void *)ADDR_BUS0_XSLV_TON0;
+    PWM0.registers = (volatile void *)ADDR_BUS0_XSLV_PWM0;
 
-    printf_uart("Hellow World - %d!!!!\n\r", 1);
+    io_per_set_output(&io_per_d, LEDG, 0, LED_ON);
+    io_per_set_output(&io_per_d, LEDG, 1, LED_ON);
+    io_per_set_output(&io_per_d, RWD, 0, 0);
+
+
 
     while(1) {
+        start_time(&time_measurement_d);
         io_per_set_output(&io_per_d, RWD, 0, 0);
-        i = wait(900000);
 
-        printf_uart("Wait : %d\n\r", i);
-        printf_uart("Index: %d\n\r", index);
+        // ***************************************
+        // ******* TON0 **************************
+        // ***************************************
+		uint32_t var0 = io_per_get_input(&io_per_d, SW, 0);
+		timer_hw_send_preset_time(&TON0, (uint64_t)SYS_HZ);
+		timer_hw_send_in(&TON0, var0);
+		uint64_t E_T = timer_hw_recieve_elapsed_time(&TON0);
+		io_per_set_output(&io_per_d, LEDR, 1, timer_hw_recieve_Q(&TON0));
+		io_per_set_output(&io_per_d, LEDR, 0, E_T);
 
+        // ***************************************
+        // ******* PWM0 **************************
+        // ***************************************
+        pwm_hw_send_frequency_duty_cycle(&PWM0, 1, 50);
+        io_per_set_output(&io_per_d, LEDR, 2, pwm_hw_recieve_Q(&PWM0));
+        
+        // ***************************************
+        // ******* Print gpio_valeu **************
+        // ***************************************
+        if (io_per_get_input(&io_per_d, KEY, 0) && is_first_time) {
+            printf_uart("gpio_value: %02d\n\r", gpio_value);
+            is_first_time = 0;
+        } else if (io_per_get_input(&io_per_d, KEY, 0) == 0){
+            is_first_time = 1;
+        }
 
-        gpio_values =  io_per_get_input(&io_per_d, SW, 1)+
+        // ***************************************
+        // ******* Arithmetic Test ***************
+        // ***************************************
+        gpio_value =  io_per_get_input(&io_per_d, SW, 0)+
+                    io_per_get_input(&io_per_d, SW, 1)+
                     io_per_get_input(&io_per_d, SW, 2)+
                     io_per_get_input(&io_per_d, SW, 3)+
                     io_per_get_input(&io_per_d, SW, 4)+
@@ -166,45 +251,17 @@ void start_application(void) {
                     io_per_get_input(&io_per_d, SW, 8)+
                     io_per_get_input(&io_per_d, SW, 9);
                     
-        mul = gpio_values * 3; 
-        div = gpio_values / 3;
-        double_v = (double)gpio_values / 3.0;
+        int_mul = gpio_value * 3; 
+        int_div = gpio_value / 3;
+        double_mul = (double)gpio_value * 3.2;
+        double_div = (double)gpio_value / 3.2;
 
-        printf_uart("gpio_values: %d\n\r", gpio_values);
-        printf_uart("mul_i      : %d\r\n", mul);
-        printf_uart("div_i      : %d\r\n", div);
+        error_arithmetic += check_arithmetic(gpio_value, int_mul, int_div, double_mul, double_div);
 
-        is_found = 0;
-        d_v = 0.0;
-        for(i = 0; i < 10; i++) {
-            if (double_v < d_v) {
-                is_found = 1;
-                printf_uart("double_v < 0.%d\n\r", i);
-                break;
-            }
-            d_v += 0.1;
+        if (error_arithmetic) {
+            io_per_set_output(&io_per_d, LEDR, 9, LED_ON);
         }
 
-        if (!is_found) {
-            d_v = 1.0;
-            for(i = 0; i < 10; i++) {
-                if (double_v < d_v) {
-                    is_found = 1;
-                    printf_uart("double_v < 1.%d\n\r", i);
-                    break;
-                }
-                d_v += 0.1;
-            }
-        }
-        
-        if (!is_found) {
-            printf_uart("double_v > 1.9\n\r");
-        }
-
-        while (io_per_get_input(&io_per_d, SW, 0) == 1){ // Halt the system
-           io_per_set_output(&io_per_d, RWD, 0, 0);
-        }
-
-        index++;
+        stop_time(&time_measurement_d);
     }
 }

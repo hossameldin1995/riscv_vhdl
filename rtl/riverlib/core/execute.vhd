@@ -756,7 +756,7 @@ begin
         v.multiclock_ena := '1';
         v.multi_res_addr := wb_res_addr;
         if CFG_FPU_ENABLE then
-            v.multi_ivec_fpu := wv(Instr_FSUB_D downto Instr_FADD_D);
+            v.multi_ivec_fpu := wv(Instr_FSGNJ_D downto Instr_FADD_D);
             if w_fpu_ena = '1' and (wv(Instr_FMOV_X_D) or wv(Instr_FEQ_D)
                 or wv(Instr_FLT_D) or wv(Instr_FLE_D)
                 or wv(Instr_FCVT_LU_D) or wv(Instr_FCVT_L_D)

@@ -7,14 +7,14 @@ OBJDUMP=riscv64-unknown-elf-objdump
 FPU_ENABLED=1
 Cyclone_V=1
 
-CFLAGS= -c -g -static -std=gnu99 -O0 -fno-common -fno-builtin-printf
+CFLAGS= -c -g -static -std=gnu99 -Ofast -fno-common -fno-builtin-printf
 ifeq ($(FPU_ENABLED), 1)
   CFLAGS += -march=rv64imafd -DFPU_ENABLED
 else
   CFLAGS += -march=rv64imac -mabi=lp64
 endif
 ifeq ($(Cyclone_V), 1)
-  CFLAGS += -DSYS_HZ=70000000
+  CFLAGS += -DSYS_HZ=65000000
 else
   CFLAGS += -DSYS_HZ=40000000
 endif
@@ -54,8 +54,6 @@ SOURCES = crt \
 	test_mbist_ram \
 	test_fpu \
 	test_timer \
-	test_missaccess \
-	test_stackprotect \
 	main
 
 OBJ_FILES = $(addsuffix .o,$(SOURCES))

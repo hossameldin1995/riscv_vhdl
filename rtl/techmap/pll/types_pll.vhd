@@ -32,6 +32,7 @@ package types_pll is
     i_reset           : in     std_logic;
     i_clk_tcxo        : in     std_logic;
     o_clk_bus         : out    std_logic;
+    o_clk_pwm         : out    std_logic;
     o_locked          : out    std_logic );
   end component;
 

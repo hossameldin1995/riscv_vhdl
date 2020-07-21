@@ -82,7 +82,8 @@ architecture arch_top_c5g of top_c5g is
 component riscv_soc is port 
 ( 
   i_rst     : in std_logic;
-  i_clk  : in std_logic;
+  i_clk     : in std_logic;
+  i_clk_pwm : in std_logic;
   --! UART1 signals:
   i_uart1_ctsn : in std_logic;
   i_uart1_rd   : in std_logic;
@@ -108,6 +109,7 @@ end component;
 
   signal w_ext_reset : std_ulogic; -- External system reset or PLL unlcoked. MUST NOT USED BY DEVICES.
   signal w_clk_bus  : std_ulogic; -- bus clock from the internal PLL (100MHz virtex6/40MHz Spartan6)
+  signal w_clk_pwm : std_ulogic;
   signal w_pll_lock : std_ulogic; -- PLL status signal. 0=Unlocked; 1=locked.
 
 begin
@@ -123,6 +125,7 @@ begin
     i_reset     => i_rst,
     i_clk_tcxo	=> CLOCK_125_p,
     o_clk_bus   => w_clk_bus,
+    o_clk_pwm   => w_clk_pwm,
     o_locked    => w_pll_lock
   );
   w_ext_reset <= i_rst or not w_pll_lock;
@@ -130,8 +133,9 @@ begin
 
   soc0 : riscv_soc port map
   ( 
-    i_rst  => w_ext_reset,
-    i_clk  => w_clk_bus,
+    i_rst     => w_ext_reset,
+    i_clk     => w_clk_bus,
+    i_clk_pwm => w_clk_pwm,
     --! UART1 signals:
     i_uart1_ctsn => '0',
     i_uart1_rd   => UART_RX,

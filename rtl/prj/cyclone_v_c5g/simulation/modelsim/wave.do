@@ -33,6 +33,8 @@ add wave -noupdate /top_c5g/soc0/wb_bus_util_w
 add wave -noupdate /top_c5g/soc0/wb_bus_util_r
 add wave -noupdate /top_c5g/soc0/irq_pins
 add wave -noupdate /top_c5g/soc0/cpu0/river0/proc0/w
+add wave -noupdate /top_c5g/soc0/cpu0/river0/proc0/iregs0/r
+add wave -noupdate /top_c5g/soc0/cpu0/river0/proc0/iregs0/rin
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ps} 0}
 quietly wave cursor active 0
@@ -96,23 +98,124 @@ WaveRestoreZoom {0 ps} {1597184 ps}
 ###################################################################
 ############################# FPU MUL #############################
 ###################################################################
+#add wave -position insertpoint  \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/async_reset \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_nrst \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_clk \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_ena \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_a \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_b \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_res \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_illegal_op \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_overflow \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_valid \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_busy \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_res \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/counter_st \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/reset \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_illegal_op \
+#sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_busy
+
+
 add wave -position insertpoint  \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/async_reset \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_nrst \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_clk \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_ena \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_a \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/i_b \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_res \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_illegal_op \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_overflow \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_valid \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/o_busy \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_res \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/counter_st \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/reset \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_illegal_op \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_busy
+sim:/top_c5g/soc0/cpu0/river0/proc0/fpuena/fregs0/r \
+sim:/top_c5g/soc0/cpu0/river0/proc0/fpuena/fregs0/rin
+
+
+
+
+add wave -position insertpoint  \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/async_reset \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_clk \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_nrst \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_pipeline_hold \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_d_valid \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_d_pc \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_d_instr \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_wb_ready \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_memop_store \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_memop_load \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_memop_sign_ext \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_memop_size \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_unsigned_op \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rv32 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_compressed \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_f64 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_isa_type \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_ivec \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_unsup_exception \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_instr_load_fault \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_dport_npc_write \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_dport_npc \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_radr1 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rdata1 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_radr2 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rdata2 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rfdata1 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rfdata2 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_res_addr \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_res_data \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_pipeline_hold \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_csr_addr \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_csr_wena \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_csr_rdata \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_csr_wdata \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_trap_valid \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_trap_pc \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_npc \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_instr_load_fault \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_illegal_instr \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_unalign_store \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_unalign_load \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_breakpoint \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_ecall \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_invalidop \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_divbyzero \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_overflow \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_underflow \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_inexact \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_fpu_valid \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_sign_ext \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_load \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_store \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_size \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_addr \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_trap_ready \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_valid \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_pc \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_npc \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_instr \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_call \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ret \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_mret \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_uret \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/r \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/rin \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_arith_res \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/w_arith_valid \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/w_arith_busy \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_shifter_a1 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_shifter_a2 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_sll \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_sllw \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_srl \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_srlw \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_sra \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_sraw \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/Multi_MUL \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/Multi_DIV \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/Multi_FPU \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/Multi_Total \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_WaitInstr \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_SingleCycle \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_MultiCycle \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_Hold \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_Hazard \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/zero64 \
+sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/R_RESET
+
+
+
 
 
 

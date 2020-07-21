@@ -25,11 +25,9 @@
 #include "maps/map_uart.h"
 #include "maps/map_irqctrl.h"
 #include "maps/i_o_peripheral.h"
-#include "maps/map_rfctrl.h"
-#include "maps/map_gnssengine.h"
-#include "maps/map_ethmac.h"
-#include "maps/map_spiflash.h"
-#include "maps/map_fsev2.h"
+#include "maps/timer_hw.h"
+#include "maps/pwm_hw.h"
+#include "maps/time_measurement.h"
 
 #define ADDR_BUS0_XSLV_OTP          0x00010000
 #define ADDR_BUS0_XSLV_FWIMAGE      0x00100000
@@ -38,22 +36,16 @@
 #define ADDR_BUS0_XSLV_GPIO         0x80000000
 #define ADDR_BUS0_XSLV_UART1        0x80001000
 #define ADDR_BUS0_XSLV_IRQCTRL      0x80002000
-#define ADDR_BUS0_XSLV_GPTIMERS     0x80005000
-#define ADDR_BUS0_XSLV_GNSS_SS      0x80008000
-#define ADDR_BUS0_XSLV_ETHMAC       0x80040000
-#define ADDR_BUS0_XSLV_PNP          0xfffff000
-// GNSS Sub System
-#define ADDR_GNSS_SS_RFCTRL         0x80008000
-#define ADDR_GNSS_SS_ENGINE         0x80009000
-#define ADDR_GNSS_SS_FSEGPS         0x8000a000
+#define ADDR_BUS0_XSLV_GPTIMERS     0x80003000
+#define ADDR_BUS0_XSLV_MEASUREMENT  0x80004000
+#define ADDR_BUS0_XSLV_TON0         0x80005000
+#define ADDR_BUS0_XSLV_PWM0         0x80006000
 
 // Interrupt pins assignemts:
 #define CFG_IRQ_UNUSED      0
 #define CFG_IRQ_UART1       1
-#define CFG_IRQ_ETHMAC      2
-#define CFG_IRQ_GPTIMERS    3
-#define CFG_IRQ_GNSS_SS     4
-#define CFG_IRQ_TOTAL       5
+#define CFG_IRQ_GPTIMERS    2
+#define CFG_IRQ_TOTAL       3
 
 // printf_uart enabling
 #define PRINTF_UART_EN

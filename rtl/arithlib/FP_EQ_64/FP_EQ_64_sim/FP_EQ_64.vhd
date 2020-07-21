@@ -16,7 +16,7 @@
 -- ---------------------------------------------------------------------------
 
 -- VHDL created from FP_EQ_64
--- VHDL created on Sun Jun 21 01:54:19 2020
+-- VHDL created on Wed Jul 15 02:08:46 2020
 
 
 library IEEE;

@@ -356,6 +356,10 @@ begin
         v.busy := '0';
         v.ready := '1';
         v.result := r.a;
+    elsif r.busy = '1' and (r.ivec(Instr_FSGNJ_D - Instr_FADD_D)) = '1' then
+	     v.busy := '0';
+        v.ready := '1';
+        v.result := r.b(63) & r.a(62 downto 0);
     elsif w_valid_fadd = '1' then
         v.busy := '0';
         v.ready := '1';

@@ -18,9 +18,7 @@
 #include "fw_api.h"
 #include "test_fpu.h"
 
-int wait(int n);
-
-int test_fpu(void) { 
+uint32_t  test_fpu(void) { 
     Reg64Type a, b, res;
     int64_t ix3;
     uint64_t ux3;
@@ -282,8 +280,6 @@ int test_fpu(void) {
         err_cnt++;
         printf_uart("  FCMP %d fail\r\n", 5);
     }
-
-    volatile int i = wait(500000);
 
     printf_uart("  FPU tests  . . . %d\r\n", test_cnt);
     printf_uart("  FPU errors . . . %d\r\n", err_cnt);
