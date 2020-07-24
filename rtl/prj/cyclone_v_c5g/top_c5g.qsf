@@ -269,9 +269,6 @@ set_global_assignment -name EDA_OUTPUT_DATA_FORMAT VHDL -section_id eda_simulati
 set_global_assignment -name QIP_FILE ../../arithlib/MUL/mul_int_20_7.qip
 set_global_assignment -name QIP_FILE ../../arithlib/DIV/div_int_20_17_speed.qip
 set_global_assignment -name QIP_FILE ../../arithlib/DIV/div_int_20_7_speed.qip
-set_global_assignment -name QIP_FILE ../../arithlib/FP_SUB_32/FP_SUB_32.qip
-set_global_assignment -name QIP_FILE ../../arithlib/FP_MUL_32/FP_MUL_32.qip
-set_global_assignment -name QIP_FILE ../../arithlib/FP_ADD_32/FP_ADD_32.qip
 set_global_assignment -name VHDL_FILE ../../funcblocklib/PID/PID_Top.vhd
 set_global_assignment -name VHDL_FILE ../../funcblocklib/PWM/PWM_32_bit.vhd
 set_global_assignment -name VHDL_FILE ../../funcblocklib/PWM/PWM_Signal.vhd
@@ -414,4 +411,10 @@ set_global_assignment -name QIP_FILE ../../arithlib/FP_MUL_64/FP_MUL_64.qip
 set_global_assignment -name SIP_FILE ../../arithlib/FP_MUL_64/FP_MUL_64.sip
 set_global_assignment -name QIP_FILE ../../techmap/pll/PLL_C5G/SysPLL_c5g.qip
 set_global_assignment -name SIP_FILE ../../techmap/pll/PLL_C5G/SysPLL_c5g.sip
+set_global_assignment -name QIP_FILE ../../arithlib/FP_ADD_32/FP_ADD_32.qip
+set_global_assignment -name SIP_FILE ../../arithlib/FP_ADD_32/FP_ADD_32.sip
+set_global_assignment -name QIP_FILE ../../arithlib/FP_MUL_32/FP_MUL_32.qip
+set_global_assignment -name SIP_FILE ../../arithlib/FP_MUL_32/FP_MUL_32.sip
+set_global_assignment -name QIP_FILE ../../arithlib/FP_SUB_32/FP_SUB_32.qip
+set_global_assignment -name SIP_FILE ../../arithlib/FP_SUB_32/FP_SUB_32.sip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

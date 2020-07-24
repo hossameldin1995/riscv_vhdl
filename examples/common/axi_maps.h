@@ -27,6 +27,7 @@
 #include "maps/i_o_peripheral.h"
 #include "maps/timer_hw.h"
 #include "maps/pwm_hw.h"
+#include "maps/pid_hw.h"
 #include "maps/time_measurement.h"
 
 #define ADDR_BUS0_XSLV_OTP          0x00010000
@@ -40,6 +41,7 @@
 #define ADDR_BUS0_XSLV_MEASUREMENT  0x80004000
 #define ADDR_BUS0_XSLV_TON0         0x80005000
 #define ADDR_BUS0_XSLV_PWM0         0x80006000
+#define ADDR_BUS0_XSLV_PID0         0x80007000
 
 // Interrupt pins assignemts:
 #define CFG_IRQ_UNUSED      0

@@ -50,8 +50,9 @@ constant CFG_BUS0_XSLV_GPTIMERS : integer := 5;
 constant CFG_BUS0_XSLV_TIME_MEASUREMENT : integer := 6;
 constant CFG_BUS0_XSLV_TON0             : integer := 7;
 constant CFG_BUS0_XSLV_PWM0             : integer := 8;
+constant CFG_BUS0_XSLV_PID0             : integer := 9;
 --! Total number of the slaves devices.
-constant CFG_BUS0_XSLV_TOTAL    : integer := 9;
+constant CFG_BUS0_XSLV_TOTAL    : integer := 10;
 --! @}
 
 --! @defgroup master_id_group AXI4 masters generic IDs.

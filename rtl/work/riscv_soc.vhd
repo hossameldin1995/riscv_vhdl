@@ -323,6 +323,19 @@ begin
     i			=> axisi(CFG_BUS0_XSLV_PWM0),
     o			=> axiso(CFG_BUS0_XSLV_PWM0)
   );
+  
+  PID0 : axi4_pid generic map (
+    async_reset => CFG_ASYNC_RESET,
+    xaddr    => 16#80007#,
+    xmask    => 16#fffff#,
+    xirq     => 0
+  ) port map (
+    clk   	=> i_clk,
+    nrst  	=> w_glob_nrst,
+    cfg   	=> slv_cfg(CFG_BUS0_XSLV_PID0),
+    i			=> axisi(CFG_BUS0_XSLV_PID0),
+    o			=> axiso(CFG_BUS0_XSLV_PID0)
+  );
 
 
 end arch_riscv_soc;

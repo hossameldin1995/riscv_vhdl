@@ -74,6 +74,8 @@ bootrom_tests: $(EXECUTABLE) $(DUMPFILE) $(HEXFILE) $(MIFFILE)
 $(MIFFILE): $(EXECUTABLE)
 	echo hex2mif $(ELF_DIR)/$(HEXFILE) $(ELF_DIR)/$(MIFFILE) 8192
 	hex2mif $(ELF_DIR)/$(HEXFILE) $(ELF_DIR)/$(MIFFILE) 8192
+	echo cp ../linuxbuild/bin/bootrom_tests.mif ../../../rtl/prj/examples/bootrom_tests/linuxbuild/bin/bootrom_tests.mif
+	cp ../linuxbuild/bin/bootrom_tests.mif ../../../rtl/prj/examples/bootrom_tests/linuxbuild/bin/bootrom_tests.mif
 
 $(HEXFILE): $(EXECUTABLE)
 	echo elf2rawx $(addprefix $(ELF_DIR)/,$<) -h -f 65536 -l 8 -o $(addprefix $(ELF_DIR)/,$(HEXFILE))

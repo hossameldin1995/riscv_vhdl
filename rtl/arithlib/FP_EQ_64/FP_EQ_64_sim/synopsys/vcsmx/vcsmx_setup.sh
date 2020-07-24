@@ -12,7 +12,7 @@
 # or its authorized distributors. Please refer to the applicable 
 # agreement for further details.
 
-# ACDS 18.0 614 linux 2020.07.15.02:08:48
+# ACDS 18.0 614 linux 2020.07.21.19:11:45
 
 # ----------------------------------------
 # vcsmx - auto-generated simulation script
@@ -107,7 +107,7 @@
 # within the Quartus project, and generate a unified
 # script which supports all the Altera IP within the design.
 # ----------------------------------------
-# ACDS 18.0 614 linux 2020.07.15.02:08:48
+# ACDS 18.0 614 linux 2020.07.21.19:11:45
 # ----------------------------------------
 # initialize variables
 TOP_LEVEL_NAME="FP_EQ_64"

@@ -35,10 +35,12 @@ add wave -noupdate /top_c5g/soc0/irq_pins
 add wave -noupdate /top_c5g/soc0/cpu0/river0/proc0/w
 add wave -noupdate /top_c5g/soc0/cpu0/river0/proc0/iregs0/r
 add wave -noupdate /top_c5g/soc0/cpu0/river0/proc0/iregs0/rin
+add wave -noupdate /top_c5g/soc0/cpu0/river0/proc0/fpuena/fregs0/r
+add wave -noupdate /top_c5g/soc0/cpu0/river0/proc0/fpuena/fregs0/rin
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ps} 0}
 quietly wave cursor active 0
-configure wave -namecolwidth 258
+configure wave -namecolwidth 320
 configure wave -valuecolwidth 138
 configure wave -justifyvalue left
 configure wave -signalnamewidth 0
@@ -117,104 +119,97 @@ WaveRestoreZoom {0 ps} {1597184 ps}
 #sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/fpuena/fpu0/fmul_d0/s_o_busy
 
 
+###################################################################
+############################# gptimer #############################
+###################################################################
+#add wave -position insertpoint  \
+#sim:/top_c5g/soc0/gptmr0/async_reset \
+#sim:/top_c5g/soc0/gptmr0/xaddr \
+#sim:/top_c5g/soc0/gptmr0/xmask \
+#sim:/top_c5g/soc0/gptmr0/xirq \
+#sim:/top_c5g/soc0/gptmr0/tmr_total \
+#sim:/top_c5g/soc0/gptmr0/clk \
+#sim:/top_c5g/soc0/gptmr0/nrst \
+#sim:/top_c5g/soc0/gptmr0/cfg \
+#sim:/top_c5g/soc0/gptmr0/i_axi \
+#sim:/top_c5g/soc0/gptmr0/o_axi \
+#sim:/top_c5g/soc0/gptmr0/o_irq \
+#sim:/top_c5g/soc0/gptmr0/r \
+#sim:/top_c5g/soc0/gptmr0/rin \
+#sim:/top_c5g/soc0/gptmr0/wb_dev_rdata \
+#sim:/top_c5g/soc0/gptmr0/wb_bus_raddr \
+#sim:/top_c5g/soc0/gptmr0/w_bus_re \
+#sim:/top_c5g/soc0/gptmr0/wb_bus_waddr \
+#sim:/top_c5g/soc0/gptmr0/w_bus_we \
+#sim:/top_c5g/soc0/gptmr0/wb_bus_wstrb \
+#sim:/top_c5g/soc0/gptmr0/wb_bus_wdata \
+#sim:/top_c5g/soc0/gptmr0/xconfig \
+#sim:/top_c5g/soc0/gptmr0/zero64 \
+#sim:/top_c5g/soc0/gptmr0/timer_type_reset \
+#sim:/top_c5g/soc0/gptmr0/R_RESET
+
+
+
+###################################################################
+############################# PID0 #############################
+###################################################################
 add wave -position insertpoint  \
-sim:/top_c5g/soc0/cpu0/river0/proc0/fpuena/fregs0/r \
-sim:/top_c5g/soc0/cpu0/river0/proc0/fpuena/fregs0/rin
-
-
-
-
+sim:/top_c5g/soc0/PID0/async_reset \
+sim:/top_c5g/soc0/PID0/xaddr \
+sim:/top_c5g/soc0/PID0/xmask \
+sim:/top_c5g/soc0/PID0/xirq \
+sim:/top_c5g/soc0/PID0/clk \
+sim:/top_c5g/soc0/PID0/nrst \
+sim:/top_c5g/soc0/PID0/cfg \
+sim:/top_c5g/soc0/PID0/i \
+sim:/top_c5g/soc0/PID0/o \
+sim:/top_c5g/soc0/PID0/wb_dev_rdata \
+sim:/top_c5g/soc0/PID0/wb_bus_raddr \
+sim:/top_c5g/soc0/PID0/w_bus_re \
+sim:/top_c5g/soc0/PID0/wb_bus_waddr \
+sim:/top_c5g/soc0/PID0/w_bus_we \
+sim:/top_c5g/soc0/PID0/wb_bus_wstrb \
+sim:/top_c5g/soc0/PID0/wb_bus_wdata \
+sim:/top_c5g/soc0/PID0/TS \
+sim:/top_c5g/soc0/PID0/PV \
+sim:/top_c5g/soc0/PID0/SP \
+sim:/top_c5g/soc0/PID0/b0 \
+sim:/top_c5g/soc0/PID0/b1 \
+sim:/top_c5g/soc0/PID0/b2 \
+sim:/top_c5g/soc0/PID0/XOUT \
+sim:/top_c5g/soc0/PID0/XOUT_R \
+sim:/top_c5g/soc0/PID0/T_XOUT_R \
+sim:/top_c5g/soc0/PID0/xconfig
 add wave -position insertpoint  \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/async_reset \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_clk \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_nrst \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_pipeline_hold \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_d_valid \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_d_pc \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_d_instr \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_wb_ready \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_memop_store \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_memop_load \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_memop_sign_ext \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_memop_size \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_unsigned_op \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rv32 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_compressed \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_f64 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_isa_type \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_ivec \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_unsup_exception \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_instr_load_fault \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_dport_npc_write \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_dport_npc \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_radr1 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rdata1 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_radr2 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rdata2 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rfdata1 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_rfdata2 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_res_addr \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_res_data \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_pipeline_hold \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_csr_addr \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_csr_wena \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_csr_rdata \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_csr_wdata \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_trap_valid \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/i_trap_pc \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_npc \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_instr_load_fault \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_illegal_instr \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_unalign_store \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_unalign_load \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_breakpoint \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_ecall \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_invalidop \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_divbyzero \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_overflow \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_underflow \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ex_fpu_inexact \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_fpu_valid \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_sign_ext \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_load \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_store \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_size \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_memop_addr \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_trap_ready \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_valid \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_pc \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_npc \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_instr \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_call \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_ret \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_mret \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/o_uret \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/r \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/rin \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_arith_res \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/w_arith_valid \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/w_arith_busy \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_shifter_a1 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_shifter_a2 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_sll \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_sllw \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_srl \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_srlw \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_sra \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/wb_sraw \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/Multi_MUL \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/Multi_DIV \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/Multi_FPU \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/Multi_Total \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_WaitInstr \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_SingleCycle \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_MultiCycle \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_Hold \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/State_Hazard \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/zero64 \
-sim:/top_c5g/soc0/cpu0/river0/proc0/exec0/R_RESET
-
-
+sim:/top_c5g/soc0/PID0/PID/clk \
+sim:/top_c5g/soc0/PID0/PID/nrst \
+sim:/top_c5g/soc0/PID0/PID/TS \
+sim:/top_c5g/soc0/PID0/PID/PV \
+sim:/top_c5g/soc0/PID0/PID/SP \
+sim:/top_c5g/soc0/PID0/PID/b0 \
+sim:/top_c5g/soc0/PID0/PID/b1 \
+sim:/top_c5g/soc0/PID0/PID/b2 \
+sim:/top_c5g/soc0/PID0/PID/XOUT \
+sim:/top_c5g/soc0/PID0/PID/XOUT_R \
+sim:/top_c5g/soc0/PID0/PID/T_XOUT \
+sim:/top_c5g/soc0/PID0/PID/T_XOUT_1 \
+sim:/top_c5g/soc0/PID0/PID/S_XOUT \
+sim:/top_c5g/soc0/PID0/PID/S_XOUT_1 \
+sim:/top_c5g/soc0/PID0/PID/T_E \
+sim:/top_c5g/soc0/PID0/PID/T_E_1 \
+sim:/top_c5g/soc0/PID0/PID/T_E_2 \
+sim:/top_c5g/soc0/PID0/PID/S_E \
+sim:/top_c5g/soc0/PID0/PID/S_E_1 \
+sim:/top_c5g/soc0/PID0/PID/S_E_2 \
+sim:/top_c5g/soc0/PID0/PID/MUL_1 \
+sim:/top_c5g/soc0/PID0/PID/MUL_2 \
+sim:/top_c5g/soc0/PID0/PID/MUL_3 \
+sim:/top_c5g/soc0/PID0/PID/ADD_1 \
+sim:/top_c5g/soc0/PID0/PID/ADD_2 \
+sim:/top_c5g/soc0/PID0/PID/Stage_Counter \
+sim:/top_c5g/soc0/PID0/PID/clk_Counter \
+sim:/top_c5g/soc0/PID0/PID/Start_Calculating \
+sim:/top_c5g/soc0/PID0/PID/rst
 
 
 

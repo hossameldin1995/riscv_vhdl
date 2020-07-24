@@ -95,11 +95,17 @@ begin
 			Frq			<= (OTHERS => '1');
 			DC				<= (OTHERS => '0');
      elsif rising_edge(clk) then 
-			if w_bus_we = '1' then --write
-				Frq	<= wb_bus_wdata(16 downto 0);
-				DC		<= wb_bus_wdata(38 downto 32);
-			elsif w_bus_re = '1' then -- read
-				wb_dev_rdata(0) <= Q;
+         if nrst = '0' then
+				wb_dev_rdata<= (OTHERS => '0');
+				Frq			<= (OTHERS => '1');
+				DC				<= (OTHERS => '0');
+			else
+				if w_bus_we = '1' then --write
+					Frq	<= wb_bus_wdata(16 downto 0);
+					DC		<= wb_bus_wdata(38 downto 32);
+				elsif w_bus_re = '1' then -- read
+					wb_dev_rdata(0) <= Q;
+				end if;
 			end if;
      end if;
   end process;

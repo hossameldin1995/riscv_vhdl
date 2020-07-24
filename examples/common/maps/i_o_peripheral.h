@@ -38,16 +38,6 @@ typedef struct io_per
 	volatile uint32_t * registers;
 } io_per;
 
-/**
- * Initializes a io_per instance.
- * @param module Pointer to a io_per instance structure.
- * @param base   Pointer to the base address of the io_per hardware instance.
- */
-static inline void io_per_initialize(struct io_per * module, volatile void * base)
-{
-	module->registers = base;
-}
-
 static inline uint32_t io_per_get_input(struct io_per * module, volatile uint32_t submodule, uint32_t index)
 {
 	return module->registers[(submodule >> 2) + index];

@@ -371,7 +371,23 @@ component axi4_pwm is
   );
 end component;
 
---component axi4_pid is
+component axi4_pid is
+  generic (
+    async_reset : boolean := false;
+    xaddr    : integer := 0;
+    xmask    : integer := 16#fffff#;
+    xirq     : integer := 0
+  );
+  port (
+    clk  		: in std_logic;
+    nrst 		: in std_logic;
+    cfg  		: out axi4_slave_config_type;
+    i    		: in  axi4_slave_in_type;
+    o  		  : out axi4_slave_out_type
+  );
+end component;
+
+--component axi4_ is
 --  generic (
   
 --  );
