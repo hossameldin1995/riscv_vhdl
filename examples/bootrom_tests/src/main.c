@@ -311,7 +311,7 @@ void start_application(void) {
             }
             else if (PID_counter == 3) {
                 XOUT_4 = pid_hw_recieve_XOUT(&PID0);
-                if (XOUT_4 != 0x464306FE) { // 12481.748
+                if (XOUT_4 != 0x46430700) { // 12481.8
                     print_uart("Error XOUT_4 =", 14);
                     print_uart_hex((uint64_t) XOUT_4);
                     print_uart("\n\r", 2);
