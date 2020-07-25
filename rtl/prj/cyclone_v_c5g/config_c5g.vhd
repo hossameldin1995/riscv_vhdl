@@ -73,7 +73,7 @@ package config_target is
   constant CFG_L2CACHE_ENA : boolean := false;
   
   --! 
-  constant CFG_FPU_ENABLE : boolean := true;
+  constant CFG_FPU_ENABLE : boolean := false;
   constant CFG_MUL_ENABLE : boolean := true;
   constant CFG_DIV_ENABLE : boolean := true;
   

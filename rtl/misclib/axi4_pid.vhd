@@ -143,10 +143,10 @@ begin
 						b2 <= wb_bus_wdata(31 downto 0);
 					END IF;
 				elsif w_bus_re = '1' then -- read
-					IF (wb_bus_raddr(0)(4) = '0') THEN
+					IF (wb_bus_raddr(0)(3) = '0') THEN
 						wb_dev_rdata(31 downto 0)  <= XOUT;
 						T_XOUT_R <= '0';
-					ELSIF (wb_bus_raddr(0)(4) = '1') THEN
+					ELSIF (wb_bus_raddr(0)(3) = '1') THEN
 						wb_dev_rdata(63 downto 0) <= (others => '0');
 						wb_dev_rdata(0) <= T_XOUT_R;
 					ELSE

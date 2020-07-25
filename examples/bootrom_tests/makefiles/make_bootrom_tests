@@ -4,7 +4,7 @@ CC=riscv64-unknown-elf-gcc
 CPP=riscv64-unknown-elf-gcc
 OBJDUMP=riscv64-unknown-elf-objdump
 
-FPU_ENABLED=1
+FPU_ENABLED=0
 Cyclone_V=1
 
 CFLAGS= -c -g -static -std=gnu99 -Ofast -fno-common -fno-builtin-printf
@@ -14,7 +14,7 @@ else
   CFLAGS += -march=rv64imac -mabi=lp64
 endif
 ifeq ($(Cyclone_V), 1)
-  CFLAGS += -DSYS_HZ=65000000
+  CFLAGS += -DSYS_HZ=75000000
 else
   CFLAGS += -DSYS_HZ=40000000
 endif

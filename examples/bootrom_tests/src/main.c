@@ -191,8 +191,8 @@ uint32_t check_arithmetic(uint32_t gpio_value,
 void start_application(void) {
     uint64_t Elapsed_Time = 0;
     uint64_t Preset_Time = 0;
-    //uint64_t TS = (SYS_HZ/1000) * 100;  //100ms
-    uint64_t TS = 400;
+    uint64_t TS = (SYS_HZ/1000) * 100;  //100ms
+    //uint64_t TS = 40000;
     uint32_t int_mul;
     uint32_t int_div;
     uint32_t error_arithmetic = 0;
@@ -281,7 +281,7 @@ void start_application(void) {
         b1_32 = float2hex(b1);
         b2_32 = float2hex(b2);
 
-        if (pid_hw_recieve_XOUT_R(&PID0)) {
+        if (pid_hw_recieve_XOUT_R(&PID0) && error_pid == 0) {
             if (PID_counter == 0) {
                 XOUT_1 = pid_hw_recieve_XOUT(&PID0);
                 if (XOUT_1 != 0x44A81333) { // 1344.6
