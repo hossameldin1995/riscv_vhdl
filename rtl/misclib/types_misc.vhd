@@ -185,39 +185,6 @@ component axi4_uart is
     o_irq  : out std_logic);
 end component;
 
---! Test Access Point via UART (debug access)
-component uart_tap is
-  port (
-    nrst     : in std_logic;
-    clk      : in std_logic;
-    i_uart   : in  uart_in_type;
-    o_uart   : out uart_out_type;
-    i_msti   : in axi4_master_in_type;
-    o_msto   : out axi4_master_out_type;
-    o_mstcfg : out axi4_master_config_type
-  );
-end component; 
-
--- JTAG TAP
-component tap_jtag is
-  generic (
-    ainst  : integer range 0 to 255 := 2;
-    dinst  : integer range 0 to 255 := 3);
-  port (
-    nrst  : in std_logic;
-    clk  : in std_logic;
-    i_tck   : in std_logic;   -- in: Test Clock
-    i_ntrst   : in std_logic;   -- in: 
-    i_tms   : in std_logic;   -- in: Test Mode State
-    i_tdi   : in std_logic;   -- in: Test Data Input
-    o_tdo   : out std_logic;   -- out: Test Data Output
-    o_jtag_vref : out std_logic;
-    i_msti   : in axi4_master_in_type;
-    o_msto   : out axi4_master_out_type;
-    o_mstcfg : out axi4_master_config_type
-    );
-end component;
-
 
 --! @brief   Interrupt controller with the AXI4 interface declaration.
 --! @details To rise interrupt on certain CPU HostIO interface is used.
@@ -258,63 +225,7 @@ component axi4_irqctrl is
     o_axi  : out axi4_slave_out_type;
     o_irq  : out std_logic
   );
-  end component; 
-
---! @brief   Plug-n-Play support module with AXI4 interface declaration.
---! @details Each device in a system hase to implements sideband signal
---!          structure 'nasti_slave_config_type' that allows FW to
---!          detect Hardware configuration in a run-time.
---! @todo Implements PnP signals for all Masters devices.
-component axi4_pnp is
-  generic (
-    async_reset : boolean := false;
-    xaddr   : integer := 0;
-    xmask   : integer := 16#fffff#;
-    tech    : integer := 0;
-    hw_id   : std_logic_vector(31 downto 0) := X"20170101"
-  );
-  port (
-    sys_clk : in  std_logic;
-    adc_clk : in  std_logic;
-    nrst   : in  std_logic;
-    mstcfg : in  bus0_xmst_cfg_vector;
-    slvcfg : in  bus0_xslv_cfg_vector;
-    cfg    : out  axi4_slave_config_type;
-    i      : in  axi4_slave_in_type;
-    o      : out axi4_slave_out_type;
-    -- OTP Timing control
-    i_otp_busy : in std_logic;
-    o_otp_cfg_rsetup : out std_logic_vector(3 downto 0);
-    o_otp_cfg_wadrsetup : out std_logic_vector(3 downto 0);
-    o_otp_cfg_wactive : out std_logic_vector(31 downto 0);
-    o_otp_cfg_whold : out std_logic_vector(3 downto 0)
-  );
-end component; 
-
-component axi4_otp is
-  generic (
-    async_reset : boolean := false;
-    xaddr   : integer := 0;
-    xmask   : integer := 16#ffffe#
-  );
-  port (
-    clk    : in  std_logic;
-    nrst   : in  std_logic;
-    cfg    : out axi4_slave_config_type;
-    i_axi  : in  axi4_slave_in_type;
-    o_axi  : out axi4_slave_out_type;
-    o_otp_we     : out  std_ulogic;
-    o_otp_re     : out  std_ulogic;
-    o_otp_addr   : out std_logic_vector(11 downto 0);
-    o_otp_wdata  : out std_logic_vector(15 downto 0);
-    i_otp_rdata  : in std_logic_vector(15 downto 0);
-    i_cfg_rsetup : in std_logic_vector(3 downto 0);
-    i_cfg_wadrsetup : in std_logic_vector(3 downto 0);
-    i_cfg_wactive : in std_logic_vector(31 downto 0);
-    i_cfg_whold : in std_logic_vector(3 downto 0);
-    o_busy : out std_logic
-  );
-end component; 
+  end component;
 
 component axi4_time_measurement is
   generic (

@@ -254,6 +254,7 @@ set_global_assignment -name FITTER_EFFORT FAST_FIT
 set_global_assignment -name PHYSICAL_SYNTHESIS_EFFORT FAST
 
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
@@ -266,14 +267,21 @@ set_global_assignment -name EDA_OUTPUT_DATA_FORMAT VHDL -section_id eda_simulati
 
 
 
-set_global_assignment -name QIP_FILE ../../arithlib/MUL/mul_int_20_7.qip
-set_global_assignment -name QIP_FILE ../../arithlib/DIV/div_int_20_17_speed.qip
-set_global_assignment -name QIP_FILE ../../arithlib/DIV/div_int_20_7_speed.qip
+
+
+
+
+
+
+
+
+set_global_assignment -name QIP_FILE ../../funcblocklib/PWM/CDC/CDC_Frq.qip
+set_global_assignment -name VERILOG_FILE ../../funcblocklib/time_measurement/SEG7_LUT.v
+set_global_assignment -name VERILOG_FILE ../../funcblocklib/time_measurement/SEG7_LUT_4.v
+set_global_assignment -name VHDL_FILE ../../work/riscv_soc.vhd
 set_global_assignment -name VHDL_FILE ../../funcblocklib/PID/PID_Top.vhd
 set_global_assignment -name VHDL_FILE ../../funcblocklib/PWM/PWM_32_bit.vhd
 set_global_assignment -name VHDL_FILE ../../funcblocklib/PWM/PWM_Signal.vhd
-set_global_assignment -name VERILOG_FILE ../../funcblocklib/time_measurement/SEG7_LUT.v
-set_global_assignment -name VERILOG_FILE ../../funcblocklib/time_measurement/SEG7_LUT_4.v
 set_global_assignment -name VHDL_FILE ../../funcblocklib/time_measurement/Time_Calculation.vhd
 set_global_assignment -name VHDL_FILE ../../funcblocklib/time_measurement/Write_To_Hexa.vhd
 set_global_assignment -name VHDL_FILE ../../funcblocklib/TON/Counter_Down_64_bit_Cin.vhd
@@ -286,21 +294,12 @@ set_global_assignment -name VHDL_FILE ../../riverlib/cache/ilru.vhd -library riv
 set_global_assignment -name VHDL_FILE ../../riverlib/cache/icache.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/cache/dcache.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/regfbank.vhd -library riverlib
-set_global_assignment -name QIP_FILE ../../arithlib/MUL/mul_int_64.qip -library arithlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/arith/int_mul_cyclone_v.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../techmap/mem/rom_c5g.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../riverlib/dsu/axi_dsu.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/cache/types_cache.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/cache/tagmemnway.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/cache/tagmemcoupled.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/cache/tagmem.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/cache/mpu.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/cache/lrunway.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/cache/icache_lru.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/cache/dcache_lru.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/cache/cache_top.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/fpu_d/l2d_d.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/core/fpu_d/imul53.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/fpu_d/idiv53.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/fpu_d/fpu_top.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/fpu_d/fmul_d.vhd -library riverlib
@@ -312,10 +311,8 @@ set_global_assignment -name VHDL_FILE ../../riverlib/core/arith/shift.vhd -libra
 set_global_assignment -name VHDL_FILE ../../riverlib/core/arith/int_mul.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/arith/int_div.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/arith/divstage64.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/core/tracer.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/stacktrbuf.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/regibank.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/core/queue.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/proc.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/memaccess.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/fetch.vhd -library riverlib
@@ -324,69 +321,28 @@ set_global_assignment -name VHDL_FILE ../../riverlib/core/decoder.vhd -library r
 set_global_assignment -name VHDL_FILE ../../riverlib/core/dbg_port.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/csr.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/core/bp_predic.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../gnsslib/types_gnss.vhd -library gnsslib
 set_global_assignment -name VHDL_FILE ../../misclib/types_misc.vhd -library misclib
-set_global_assignment -name VHDL_FILE ../../misclib/tap_uart.vhd -library misclib
-set_global_assignment -name VHDL_FILE ../../misclib/tap_jtag.vhd -library misclib
 set_global_assignment -name VHDL_FILE ../../misclib/reset_glb.vhd -library misclib
-set_global_assignment -name VHDL_FILE ../../misclib/dcom_uart.vhd -library misclib
-set_global_assignment -name VHDL_FILE ../../misclib/dcom_jtag.vhd -library misclib
 set_global_assignment -name VHDL_FILE ../../misclib/axi4_uart.vhd -library misclib
 set_global_assignment -name VHDL_FILE ../../misclib/axi4_sram.vhd -library misclib
 set_global_assignment -name VHDL_FILE ../../misclib/axi4_rom.vhd -library misclib
-set_global_assignment -name VHDL_FILE ../../misclib/axi4_pnp.vhd -library misclib
-set_global_assignment -name VHDL_FILE ../../misclib/axi4_otp.vhd -library misclib
 set_global_assignment -name VHDL_FILE ../../misclib/axi4_irqctrl.vhd -library misclib
 set_global_assignment -name VHDL_FILE ../../misclib/axi4_gptimers.vhd -library misclib
 set_global_assignment -name VHDL_FILE ../../misclib/axi4_gpio.vhd -library misclib
-set_global_assignment -name VHDL_FILE ../../misclib/axi4_flashspi.vhd -library misclib
-set_global_assignment -name VHDL_FILE ../../ethlib/types_eth.vhd -library ethlib
-set_global_assignment -name VHDL_FILE ../../ethlib/grethc64.vhd -library ethlib
-set_global_assignment -name VHDL_FILE ../../ethlib/grethaxi.vhd -library ethlib
-set_global_assignment -name VHDL_FILE ../../ethlib/greth_tx.vhd -library ethlib
-set_global_assignment -name VHDL_FILE ../../ethlib/greth_rx.vhd -library ethlib
-set_global_assignment -name VHDL_FILE ../../ethlib/eth_rstgen.vhd -library ethlib
-set_global_assignment -name VHDL_FILE ../../ethlib/eth_axi_mst.vhd -library ethlib
-set_global_assignment -name VHDL_FILE ../../work/riscv_soc.vhd
 set_global_assignment -name VHDL_FILE ../../techmap/pll/types_pll.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/pll/SysPLL_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/pll/SysPLL_micron180.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/pll/SysPLL_inferred.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/pll/clkp90_tech.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/mem/types_mem.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/mem/syncram_2p_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/mem/syncram_2p_inferred.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/mem/srambytes_tech.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/mem/sram8_inferred_init.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/mem/sram8_inferred.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/mem/romprn_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/mem/romprn_inferred.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/mem/rom_tech.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/mem/rom_inferred.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/mem/ram32x2_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/mem/ram32_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/mem/ram32_inferred.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/mem/ram_tech.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/mem/ram_inferred.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/mem/otp_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/mem/otp_clocked.vhd -library techmap
 set_global_assignment -name VHDL_FILE ../../techmap/gencomp/gencomp.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/types_buf.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/obuf_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/obuf_inferred.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/iobuf_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/iobuf_inferred.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/igdsbuf_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/idsbuf_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/ibufg_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/ibuf_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/ibuf_inferred.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/bufgmux_tech.vhd -library techmap
-set_global_assignment -name VHDL_FILE ../../techmap/bufg/bufgmux_micron180.vhd -library techmap
-set_global_assignment -name VHDL_FILE config_c5g.vhd -library target
 set_global_assignment -name VHDL_FILE ../../riverlib/types_river.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/river_top.vhd -library riverlib
-set_global_assignment -name VHDL_FILE ../../riverlib/river_serdes.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/river_cfg.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../riverlib/river_amba.vhd -library riverlib
 set_global_assignment -name VHDL_FILE ../../commonlib/types_util.vhd -library commonlib
@@ -396,7 +352,7 @@ set_global_assignment -name VHDL_FILE ../../ambalib/types_amba4.vhd -library amb
 set_global_assignment -name VHDL_FILE ../../ambalib/defslv.vhd -library ambalib
 set_global_assignment -name VHDL_FILE ../../ambalib/axislv.vhd -library ambalib
 set_global_assignment -name VHDL_FILE ../../ambalib/axictrl_bus0.vhd -library ambalib
-set_global_assignment -name SDC_FILE top_c5g.SDC
+set_global_assignment -name VHDL_FILE config_c5g.vhd -library target
 set_global_assignment -name QIP_FILE ../../arithlib/FP_EQ_64/FP_EQ_64.qip
 set_global_assignment -name SIP_FILE ../../arithlib/FP_EQ_64/FP_EQ_64.sip
 set_global_assignment -name QIP_FILE ../../arithlib/FP_LT_64/FP_LT_64.qip
@@ -409,12 +365,19 @@ set_global_assignment -name QIP_FILE ../../arithlib/FP_ADD_SUB_64/FP_ADD_SUB_64.
 set_global_assignment -name SIP_FILE ../../arithlib/FP_ADD_SUB_64/FP_ADD_SUB_64.sip
 set_global_assignment -name QIP_FILE ../../arithlib/FP_MUL_64/FP_MUL_64.qip
 set_global_assignment -name SIP_FILE ../../arithlib/FP_MUL_64/FP_MUL_64.sip
-set_global_assignment -name QIP_FILE ../../techmap/pll/PLL_C5G/SysPLL_c5g.qip
-set_global_assignment -name SIP_FILE ../../techmap/pll/PLL_C5G/SysPLL_c5g.sip
+set_global_assignment -name QIP_FILE ../../techmap/pll/SysPLL_c5g/SysPLL_c5g.qip
+set_global_assignment -name SIP_FILE ../../techmap/pll/SysPLL_c5g/SysPLL_c5g.sip
 set_global_assignment -name QIP_FILE ../../arithlib/FP_ADD_32/FP_ADD_32.qip
 set_global_assignment -name SIP_FILE ../../arithlib/FP_ADD_32/FP_ADD_32.sip
 set_global_assignment -name QIP_FILE ../../arithlib/FP_MUL_32/FP_MUL_32.qip
 set_global_assignment -name SIP_FILE ../../arithlib/FP_MUL_32/FP_MUL_32.sip
 set_global_assignment -name QIP_FILE ../../arithlib/FP_SUB_32/FP_SUB_32.qip
 set_global_assignment -name SIP_FILE ../../arithlib/FP_SUB_32/FP_SUB_32.sip
+set_global_assignment -name QIP_FILE ../../arithlib/MUL/mul_int_20_7.qip
+set_global_assignment -name QIP_FILE ../../arithlib/DIV/div_int_20_17_speed.qip
+set_global_assignment -name QIP_FILE ../../arithlib/DIV/div_int_20_7_speed.qip
+set_global_assignment -name QIP_FILE ../../arithlib/MUL/mul_int_64.qip -library arithlib
+set_global_assignment -name SDC_FILE top_c5g.SDC
+set_global_assignment -name QIP_FILE ../../funcblocklib/PWM/CDC/CDC_DC.qip
+set_global_assignment -name QIP_FILE ../../funcblocklib/PWM/CDC/CDC_Q.qip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

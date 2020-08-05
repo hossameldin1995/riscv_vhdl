@@ -55,21 +55,6 @@ package types_mem is
   end component;
 
 
-  ------------------------------------------------------------------------------
-  --! @brief   Galileo PRN codes ROM storage:
-  --! @details This ROM is used in FSE Engine to form reference E1 reference
-  --!          signals. HEX-file isn't used for this ROM because 'inferred'
-  --!          module was built using "case when" operators.
-  component RomPrn_tech is
-  generic (
-    generic_tech : integer := 0
-  );
-  port (
-    i_clk       : in std_logic;
-    i_address   : in std_logic_vector(12 downto 0);
-    o_data      : out std_logic_vector(31 downto 0)
-  );
-  end component;
 
   --! @brief   Declaration of the "virtual" SRAM component with unaligned access.
   --! @details This module implements internal SRAM and support unaligned access 
@@ -103,82 +88,6 @@ package types_mem is
   );
   end component;
 
-
-  --! @brief Virtual SRAM block with fixed 32-bits data width.
-  --! @details This module doesn't support byte access and always implements
-  --!          4-bytes alignment.
-  component Ram32_tech
-  generic (
-    generic_tech   : integer := 0;
-    generic_abits : integer := 10
-  );
-  port (
-    i_clk      : in std_logic;
-    i_address  : in std_logic_vector(generic_abits-1 downto 0);
-    i_wr_ena   : in std_logic;
-    i_data     : in std_logic_vector(31 downto 0);
-    o_data     : out std_logic_vector(31 downto 0)
-  );
-  end component;
-
-  --! @brief Virtual SRAM block with fixed 64-bits data width.
-  --! @details This module doesn't support byte access and always implements
-  --!          4-bytes alignment.
-  component Ram32x2_tech
-  generic (
-    generic_tech   : integer := 0;
-    generic_kWords : integer := 1
-  );
-  port (
-    i_clk      : in std_logic;
-    i_address  : in std_logic_vector(10+log2(generic_kWords)-1 downto 0);
-    i_wr_ena   : in std_logic_vector(1 downto 0);
-    i_data     : in std_logic_vector(63 downto 0);
-    o_data     : out std_logic_vector(63 downto 0)
-  );
-  end component;
-
-  --! @brief Virtual SRAM block with fixed 64-bits data width.
-  --! @details This module doesn't support byte access and always implements
-  --!          8-bytes alignment.
-  component Ram64_tech
-  generic (
-    generic_tech   : integer := 0;
-    generic_abits  : integer := 4
-  );
-  port (
-    i_clk      : in std_logic;
-    i_address  : in std_logic_vector(generic_abits-1 downto 0);
-    i_wr_ena   : in std_logic;
-    i_data     : in std_logic_vector(63 downto 0);
-    o_data     : out std_logic_vector(63 downto 0)
-  );
-  end component;
-
-  --! @brief dual-port RAM declaration.
-  component syncram_2p_tech is
-  generic (
-    tech : integer := 0;
-    abits : integer := 6;
-    dbits : integer := 8;
-    sepclk : integer := 0;
-    wrfst : integer := 0;
-    testen : integer := 0;
-    words : integer := 0;
-    custombits : integer := 1
-  );
-  port (
-    rclk     : in std_ulogic;
-    renable  : in std_ulogic;
-    raddress : in std_logic_vector((abits -1) downto 0);
-    dataout  : out std_logic_vector((dbits -1) downto 0);
-    wclk     : in std_ulogic;
-    write    : in std_ulogic;
-    waddress : in std_logic_vector((abits -1) downto 0);
-    datain   : in std_logic_vector((dbits -1) downto 0)
-  );
-  end component;
-
   component dpram_tech is
   generic (
     memtech : integer := 0;
@@ -206,23 +115,6 @@ package types_mem is
     o_rdata : out std_logic_vector(dbits-1 downto 0);
     i_wena  : in std_logic;
     i_wdata : in std_logic_vector(dbits-1 downto 0)
-  );
-  end component;
-
-  component otp_tech is generic (
-    memtech : integer := 0
-  );
-  port (
-    clk      : in std_logic;  -- only for FPGA
-    i_we     : in  std_ulogic;
-    i_re     : in  std_ulogic;
-    i_addr   : in std_logic_vector(11 downto 0);
-    i_wdata  : in std_logic_vector(15 downto 0);
-    o_rdata  : out std_logic_vector(15 downto 0);
-    io_gnd   : inout std_logic;
-    io_vdd   : inout std_logic;
-    io_vdd18 : inout std_logic;
-    io_upp   : inout std_logic
   );
   end component;
 
